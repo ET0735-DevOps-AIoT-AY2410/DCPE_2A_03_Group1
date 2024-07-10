@@ -67,16 +67,16 @@ def start():
     oldLight = 0
 
     systemON = True
-    adjustment = false
+    adjustment = False
     LCD.lcd.lcd_display_string
 
     while(systemON):
-        LCD.lcd.lcd_display_string("Now Scanning", 1)
+        LCD.lcd.lcd_display_string("Sensors Scanning", 1)
         LCD.lcd.lcd_display_string("Temp:" + detection.temp + "Light:" + detection.light,2)
 
         keyvalue= shared_keypad_queue.get()
 
-        if(IsKeyPressed):
+        if(keyvalue == 0):
             systemON = False
             adjustment = True
             
@@ -92,17 +92,23 @@ def start():
 
         if(key == '*'):
             LCD.lcd.lcd_clear
-            print("Enter New Temperature Threshold")
+
+            LCD.lcd.lcd_display_string("Enter New Temperature Threshold")
             oldTemperature = temperature
             temperature = shared_keypad_queue.get()
+
+            LCD.lcd.lcd_clear
         
             LCD.lcd.lcd_display_string("Old Temperature:" + oldTemperature,1)
             LCD.lcd.lcd_display_string("New Temperature:" + temperature,2)
         elif(key == '#'):
             LCD.lcd.lcd_clear
-            print("Enter Light Threshold")
+
+            LCD.lcd.lcd_display_string("Enter Light Threshold")
             oldLight = light 
             light = shared_keypad_queue.get()
+
+            LCD.lcd.lcd_clear
 
             LCD.lcd.lcd_display_string("Old Light:" + oldLight,1)
             LCD.lcd.lcd_display_string("New Light:" + light,2)
