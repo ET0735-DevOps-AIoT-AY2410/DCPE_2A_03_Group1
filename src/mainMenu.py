@@ -22,12 +22,13 @@ import detection
 #Empty list to store sequence of keypad presses
 shared_keypad_queue = queue.Queue()
 
-
+IsKeyPressed = False
 
 
 #Call back function invoked when any key on keypad is pressed
 def key_pressed(key):
     shared_keypad_queue.put(key)
+    IsKeyPressed = True
 
 
 def main():
@@ -53,16 +54,60 @@ def main():
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
+    start()
+    
+
+
+def start():
+    oldTemperature = 0
+    temperature = 0
+
+
+    light = 0
+    oldLight = 0
+
     systemON = True
+    adjustment = false
+    LCD.lcd.lcd_display_string
 
     while(systemON):
-        lcd.lcd_display_string("Now Scanning", 1)
-        lcd.lcd_display_string("Temp:" + detection.temp + "Light:" + detection.light)
+        LCD.lcd.lcd_display_string("Now Scanning", 1)
+        LCD.lcd.lcd_display_string("Temp:" + detection.temp + "Light:" + detection.light,2)
 
         keyvalue= shared_keypad_queue.get()
 
-        if(key_pressed):
+        if(IsKeyPressed):
             systemON = False
+            adjustment = True
+            
         else:
             systemON = True
 
+    while(adjustment):
+        LCD.lcd.lcd_clear
+        LCD.lcd.lcd_display_string("Temp Thres:'*'")
+        LCD.lcd.lcd_display_string("Light Thres:'#'")
+
+        key = shared_keypad_queue.get()
+
+        if(key == '*'):
+            LCD.lcd.lcd_clear
+            print("Enter New Temperature Threshold")
+            oldTemperature = temperature
+            temperature = shared_keypad_queue.get()
+        
+            LCD.lcd.lcd_display_string("Old Temperature:" + oldTemperature,1)
+            LCD.lcd.lcd_display_string("New Temperature:" + temperature,2)
+        elif(key == '#'):
+            LCD.lcd.lcd_clear
+            print("Enter Light Threshold")
+            oldLight = light 
+            light = shared_keypad_queue.get()
+
+            LCD.lcd.lcd_display_string("Old Light:" + oldLight,1)
+            LCD.lcd.lcd_display_string("New Light:" + light,2)
+
+    
+
+
+        
