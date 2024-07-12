@@ -1,3 +1,10 @@
+
+# REQ-11	
+# When the fire is detected (fireDetected = True), buzzer will constantly play a loud sound ON and OFF at 0.5Hz until fire alarm is turned off.
+
+# REQ-12	
+# When the fire is detected (fireDetected = True), LED must blink OFF and ON  at 0.5Hz constantly until fire alarm is turned off.
+
 import time
 from time import sleep
 import RPi.GPIO as GPIO
