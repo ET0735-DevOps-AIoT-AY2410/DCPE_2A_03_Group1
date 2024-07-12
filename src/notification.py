@@ -1,3 +1,13 @@
+
+# REQ-13	
+# When the fire is detected (fireDetected = True) OR manual SOS switch is activated (helpNeeded = True), send an automated Telegram alert to SCDF.
+
+# REQ-14	
+# The notification must specify if the situation is a fire or elderly needing urgent help.
+
+# REQ-15	
+# The notification system must include the location of the fire/activated switch within the house to assist first responders
+
 ########################################################
 # READ ME READ ME READ ME READ ME READ ME
 # dependency library: requests
