@@ -27,4 +27,4 @@ def main():
     when_fire_detected(fireIsDetected)
 
 if __name__ =="__main__":
-    main()
+    main() 
