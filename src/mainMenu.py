@@ -11,13 +11,11 @@ import detection
 #Empty list to store sequence of keypad presses
 shared_keypad_queue = queue.Queue()
 
-IsKeyPressed = False
 
 
 #Call back function invoked when any key on keypad is pressed
 def key_pressed(key):
     shared_keypad_queue.put(key)
-    IsKeyPressed = True
 
 
 def main():
