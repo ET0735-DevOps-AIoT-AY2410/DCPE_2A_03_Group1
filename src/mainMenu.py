@@ -28,11 +28,11 @@ def main():
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
-    start()
+    start(lcd)
     
 
 
-def start():
+def start(lcd):
     oldTemperature = 0
     temperature = 0
 
@@ -43,8 +43,8 @@ def start():
     adjustment = False
 
     while(scanner):
-        LCD.lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
-        LCD.lcd.lcd_display_string("Temp: 1" + "Light: 2" ,2)
+        lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
+        lcd.lcd_display_string("Temp: 1" + "Light: 2" ,2)
 
         keyvalue= shared_keypad_queue.get()
 
@@ -56,32 +56,32 @@ def start():
             scanner = True
 
     while(adjustment):
-        LCD.lcd.lcd_clear
-        LCD.lcd.lcd_display_string("Temp Thres:'1'", 1)
-        LCD.lcd.lcd_display_string("Light Thres:'2'", 2)
+        lcd.lcd_clear
+        lcd.lcd_display_string("Temp Thres:'1'", 1)
+        lcd.lcd_display_string("Light Thres:'2'", 2)
 
         key = shared_keypad_queue.get()
 
         if(key == 1):                                             #if keypad = 1, change temp threshold
-            LCD.lcd.lcd_clear
-            LCD.lcd.lcd_display_string("Enter Temp Thres", 1)
+            lcd.lcd_clear
+            lcd.lcd_display_string("Enter Temp Thres", 1)
             oldTemperature = temperature
 
             temperature = int(input_from_keypad())
 
-            LCD.lcd.lcd_clear
-            LCD.lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
-            LCD.lcd.lcd_display_string("New Temp:" + str(temperature),2)
+            lcd.lcd_clear
+            lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
+            lcd.lcd_display_string("New Temp:" + str(temperature),2)
         elif(key == 2):                                                   #if keypad = 2, change light threshold
-            LCD.lcd.lcd_clear
-            LCD.lcd.lcd_display_string("Enter ADC Thres", 1)
+            lcd.lcd_clear
+            lcd.lcd_display_string("Enter ADC Thres", 1)
             oldLight = light 
 
             light = int(input_from_keypad)
 
-            LCD.lcd.lcd_clear
-            LCD.lcd.lcd_display_string("Old Light:" + str(oldLight),1)
-            LCD.lcd.lcd_display_string("New Light:" + str(light),2)
+            lcd.lcd_clear
+            lcd.lcd_display_string("Old Light:" + str(oldLight),1)
+            lcd.lcd_display_string("New Light:" + str(light),2)
 
     
 def input_from_keypad():
