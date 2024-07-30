@@ -1,3 +1,33 @@
+from hal import hal_temp_humidity_sensor as temp
+from hal import hal_adc as adc
+from hal import hal_lcd as LCD
+
+def main():
+    temp.init()
+    adc.init()
+    
+temperature_list = []
+adc_list = []    
+lcd = LCD.lcd()
+lcd.lcd_clear
+
+while (True):
+    def pingtemp():
+        temperature = temp.read_temp_humidity()
+        temperature_list.append(temperature)
+
+    def pingadc():
+        adcvalue = adc.get_adc_value()
+        adc_list.append(adcvalue)
+
+    if len(temperature_list) > 5:  
+        temperature_list.pop(0)
+
+    if len(adc_list) > 5:
+        adc_list.pop(0)
+        
+    lcd.lcd_display_string ("Last 5 temperature" + temperature_list, 1)
+    lcd.lcd_display_string ("Last 5 light intensity" + adc_list, 2)
 
 # REQ-04	
 # Constantly ping sensors to collect data on the temperature and light intensity in the surroundings. Store the last 5 recorded data (of temperature and light intensity) in an array. 
