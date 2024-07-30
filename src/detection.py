@@ -1,33 +1,78 @@
 from hal import hal_temp_humidity_sensor as temp
 from hal import hal_adc as adc
 from hal import hal_lcd as LCD
+from hal import hal_led as led
+
+import time
+from threading import Thread
+import queue
+
+temperature_list = []
+adc_list = []    
+average_temp = 0
+
 
 def main():
     temp.init()
     adc.init()
-    
-temperature_list = []
-adc_list = []    
-lcd = LCD.lcd()
-lcd.lcd_clear
 
-while (True):
-    def pingtemp():
-        temperature = temp.read_temp_humidity()
-        temperature_list.append(temperature)
+    #initialization of HAL modules
+    led.init()
+ 
+    lcd = LCD.lcd()
+    lcd.lcd_clear()
 
-    def pingadc():
-        adcvalue = adc.get_adc_value()
-        adc_list.append(adcvalue)
+    alarm = False
 
+    while (True):
+
+        pingtemp()      #run temp
+        pingadc()       #run adc
+
+        avgTemp()
+
+        alarmStatus()
+
+        listUpdate()
+        
+        lcd.lcd_display_string ("Last 5 temperature" + temperature_list[4], 1)
+        lcd.lcd_display_string ("Last 5 light intensity" + adc_list[4], 2)
+
+def pingtemp():                                 #Capture Temperature Values on last 5 seconds
+    temperature = temp.read_temp_humidity()    
+    time.sleep(1)            
+    temperature_list.append(temperature)
+
+def pingadc():                                  #Capture ADC Values on last 5 seconds
+    adcvalue = adc.get_adc_value()
+    time.sleep(1)
+    adc_list.append(adcvalue)
+
+def avgTemp():
+    if len(temperature_list) > 0:                                           #Calculate Average Temperature
+        average_temp = sum(temperature_list) / len(temperature_list)
+    else:
+        average_temp = 0
+
+def alarmStatus():
+    if (temperature_list[4] > (average_temp + 5)):
+        alarm = True
+    else:
+        alarm = False
+
+def listUpdate():
     if len(temperature_list) > 5:  
         temperature_list.pop(0)
 
     if len(adc_list) > 5:
         adc_list.pop(0)
-        
-    lcd.lcd_display_string ("Last 5 temperature" + temperature_list, 1)
-    lcd.lcd_display_string ("Last 5 light intensity" + adc_list, 2)
+
+
+
+
+
+if __name__ == "__main__":
+    main()
 
 # REQ-04	
 # Constantly ping sensors to collect data on the temperature and light intensity in the surroundings. Store the last 5 recorded data (of temperature and light intensity) in an array. 
