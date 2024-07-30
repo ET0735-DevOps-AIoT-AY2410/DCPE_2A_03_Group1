@@ -39,7 +39,6 @@ def main():
         
         print("avg temperature:" + str(average_temp))
         print("Last 5 temperatures: " + str(temperature_list))
-        print("avg temperature:" + str(average_temp))
         print("Last 5 light intensity: " + str(adc_list))
 
 def pingtemp():                                 #Capture Temperature Values on last 5 seconds
