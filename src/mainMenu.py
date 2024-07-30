@@ -2,20 +2,9 @@ import time
 from threading import Thread
 import queue
 
-from hal import hal_led as led
 from hal import hal_lcd as LCD
-from hal import hal_adc as adc
-from hal import hal_buzzer as buzzer
 from hal import hal_keypad as keypad
-from hal import hal_moisture_sensor as moisture_sensor
-from hal import hal_input_switch as input_switch
-from hal import hal_ir_sensor as ir_sensor
-from hal import hal_rfid_reader as rfid_reader
-from hal import hal_servo as servo
-from hal import hal_temp_humidity_sensor as temp_humid_sensor
-from hal import hal_usonic as usonic
-from hal import hal_dc_motor as dc_motor
-from hal import hal_accelerometer as accel
+
 
 import detection
 
@@ -33,19 +22,6 @@ def key_pressed(key):
 
 def main():
     #initialization of HAL modules
-    led.init()
-    adc.init()
-    buzzer.init()
-  
-    moisture_sensor.init()
-    input_switch.init()
-    ir_sensor.init()
-    reader = rfid_reader.init()
-    servo.init()
-    temp_humid_sensor.init()
-    usonic.init()
-    dc_motor.init()
-    accelerometer = accel.init()
 
     keypad.init(key_pressed)
     keypad_thread = Thread(target=keypad.get_key)
@@ -62,58 +38,65 @@ def start():
     oldTemperature = 0
     temperature = 0
 
-
     light = 0
     oldLight = 0
 
-    systemON = True
+    scanner = True
     adjustment = False
     LCD.lcd.lcd_display_string
 
-    while(systemON):
-        LCD.lcd.lcd_display_string("Sensors Scanning", 1)
-        LCD.lcd.lcd_display_string("Temp:" + detection.temp + "Light:" + detection.light,2)
+    while(scanner):
+        LCD.lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
+        LCD.lcd.lcd_display_string("Temp: 1" + "Light: 2" ,2)
 
         keyvalue= shared_keypad_queue.get()
 
-        if(keyvalue == 0):
-            systemON = False
+        if(keyvalue == 0):                         #if keypad '0' pressed, switch to adjustment system             
+            scanner = False
             adjustment = True
             
         else:
-            systemON = True
+            scanner = True
 
     while(adjustment):
         LCD.lcd.lcd_clear
-        LCD.lcd.lcd_display_string("Temp Thres:'*'")
-        LCD.lcd.lcd_display_string("Light Thres:'#'")
+        LCD.lcd.lcd_display_string("Temp Thres:'1'", 1)
+        LCD.lcd.lcd_display_string("Light Thres:'2'", 2)
 
         key = shared_keypad_queue.get()
 
-        if(key == '*'):
+        if(key == '1'):                                             #if keypad = 1, change temp threshold
             LCD.lcd.lcd_clear
-
-            LCD.lcd.lcd_display_string("Enter New Temperature Threshold")
+            LCD.lcd.lcd_display_string("Enter Temp Thres", 1)
             oldTemperature = temperature
-            temperature = shared_keypad_queue.get()
+
+            temperature = int(input_from_keypad())
 
             LCD.lcd.lcd_clear
-        
-            LCD.lcd.lcd_display_string("Old Temperature:" + oldTemperature,1)
-            LCD.lcd.lcd_display_string("New Temperature:" + temperature,2)
-        elif(key == '#'):
+            LCD.lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
+            LCD.lcd.lcd_display_string("New Temp:" + str(temperature),2)
+        elif(key == '2'):                                                   #if keypad = 2, change light threshold
             LCD.lcd.lcd_clear
-
-            LCD.lcd.lcd_display_string("Enter Light Threshold")
+            LCD.lcd.lcd_display_string("Enter ADC Thres", 1)
             oldLight = light 
-            light = shared_keypad_queue.get()
+
+            light = int(input_from_keypad)
 
             LCD.lcd.lcd_clear
-
-            LCD.lcd.lcd_display_string("Old Light:" + oldLight,1)
-            LCD.lcd.lcd_display_string("New Light:" + light,2)
+            LCD.lcd.lcd_display_string("Old Light:" + str(oldLight),1)
+            LCD.lcd.lcd_display_string("New Light:" + str(light),2)
 
     
-
+def input_from_keypad():
+    value = ""
+    while (True):
+        key = shared_keypad_queue.get()
+        if key == '#':                  #key # to break away from entering value
+            break
+        value = str(key)
+    return value
 
         
+
+if __name__ == "__main__":
+    main()

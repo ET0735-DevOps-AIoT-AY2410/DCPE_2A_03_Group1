@@ -11,6 +11,8 @@ temperature_list = []
 adc_list = []    
 average_temp = 0
 
+fireDetected = False
+
 
 def main():
     temp.init()
