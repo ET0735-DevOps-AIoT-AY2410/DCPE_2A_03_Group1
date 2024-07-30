@@ -33,20 +33,20 @@ def main():
 
         avgTemp()
 
-        alarmStatus()
+        # alarmStatus()
 
         listUpdate()
         
-        lcd.lcd_display_string ("Last 5 temperature" + temperature_list[4], 1)
-        lcd.lcd_display_string ("Last 5 light intensity" + adc_list[4], 2)
+        print("Last 5 temperatures: " + str(temperature_list))
+        print("Last 5 light intensity: " + str(adc_list))
 
 def pingtemp():                                 #Capture Temperature Values on last 5 seconds
-    temperature = temp.read_temp_humidity()    
+    temperature = temp.read_temp_humidity()[0]    
     time.sleep(1)            
     temperature_list.append(temperature)
 
 def pingadc():                                  #Capture ADC Values on last 5 seconds
-    adcvalue = adc.get_adc_value()
+    adcvalue = adc.get_adc_value(0)
     time.sleep(1)
     adc_list.append(adcvalue)
 
@@ -56,11 +56,11 @@ def avgTemp():
     else:
         average_temp = 0
 
-def alarmStatus():
+"""def alarmStatus():
     if (temperature_list[4] > (average_temp + 5)):
         alarm = True
     else:
-        alarm = False
+        alarm = False"""
 
 def listUpdate():
     if len(temperature_list) > 5:  
