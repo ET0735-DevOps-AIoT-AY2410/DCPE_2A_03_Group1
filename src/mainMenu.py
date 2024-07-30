@@ -26,6 +26,7 @@
 # 	 Line 2 = “New thrshld: yy”
 # After entering # in the keypad, return to main menu in REQ-01.
 
+
 import time
 from threading import Thread
 import queue
@@ -72,42 +73,39 @@ def start(lcd):
 
     while(scanner):
         lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
-        lcd.lcd_display_string("Temp: 1" + "Light: 2" ,2)
+        lcd.lcd_display_string("Temp:1 Light:2" ,2)
 
         keyvalue = shared_keypad_queue.get()
 
         if(keyvalue == 0):                         #if keypad '0' pressed, switch to adjustment system             
             scanner = False
             adjustment = True
-            
-        else:
-            scanner = True
 
     while(adjustment):
-        lcd.lcd_clear
+        lcd.lcd_clear()
         lcd.lcd_display_string("Temp Thres:'1'", 1)
         lcd.lcd_display_string("Light Thres:'2'", 2)
 
         key = shared_keypad_queue.get()
 
         if(key == 1):                                             #if keypad = 1, change temp threshold
-            lcd.lcd_clear
+            lcd.lcd_clear()
             lcd.lcd_display_string("Enter Temp Thres", 1)
             oldTemperature = temperature
 
             temperature = int(input_from_keypad())
 
-            lcd.lcd_clear
+            lcd.lcd_clear()
             lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
             lcd.lcd_display_string("New Temp:" + str(temperature),2)
         elif(key == 2):                                                   #if keypad = 2, change light threshold
-            lcd.lcd_clear
+            lcd.lcd_clear()
             lcd.lcd_display_string("Enter ADC Thres", 1)
             oldLight = light 
 
-            light = int(input_from_keypad)
+            light = int(input_from_keypad())
 
-            lcd.lcd_clear
+            lcd.lcd_clear()
             lcd.lcd_display_string("Old Light:" + str(oldLight),1)
             lcd.lcd_display_string("New Light:" + str(light),2)
 
