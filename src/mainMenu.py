@@ -41,7 +41,6 @@ def start():
 
     scanner = True
     adjustment = False
-    LCD.lcd.lcd_display_string
 
     while(scanner):
         LCD.lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
@@ -63,7 +62,7 @@ def start():
 
         key = shared_keypad_queue.get()
 
-        if(key == '1'):                                             #if keypad = 1, change temp threshold
+        if(key == 1):                                             #if keypad = 1, change temp threshold
             LCD.lcd.lcd_clear
             LCD.lcd.lcd_display_string("Enter Temp Thres", 1)
             oldTemperature = temperature
@@ -73,7 +72,7 @@ def start():
             LCD.lcd.lcd_clear
             LCD.lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
             LCD.lcd.lcd_display_string("New Temp:" + str(temperature),2)
-        elif(key == '2'):                                                   #if keypad = 2, change light threshold
+        elif(key == 2):                                                   #if keypad = 2, change light threshold
             LCD.lcd.lcd_clear
             LCD.lcd.lcd_display_string("Enter ADC Thres", 1)
             oldLight = light 
