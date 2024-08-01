@@ -15,6 +15,7 @@ def main():
             GPIO.output(24,0) 
             print ("false alarm")
             fireDetected = False
+            print (id)
         
         return fireDetected
     
