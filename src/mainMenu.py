@@ -72,10 +72,17 @@ def start(lcd):
     adjustment = False
     display = False
 
+    temp_list = detection.pingtemp()
+    adc_list = detection.pingadc()
+    detection.listUpdate()
+
     while True:
         while(scanner):
             lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
-            lcd.lcd_display_string("Temp:1 Light:2" ,2)
+            lcd.lcd_display_string("T:" + temp_list[4] + "L:" + adc_list[4] ,2)
+
+            temp_list = detection.pingtemp()
+            adc_list = detection.pingadc()
 
             keyvalue = shared_keypad_queue.get()
 
