@@ -9,15 +9,17 @@
 # The notification system must include the location of the fire/activated switch within the house to assist first responders
 
 # To send a notification, use sendNotif(type, location)
-    # type must be "fire" or "help"
+    # ty    pe must be "fire" or "help"
     # location must be a string
 
 import requests 
 
-token = "6745515213:AAFjfoODFwsKv7FUzzdTig-cf-VNDILn80U"
+token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
+url = f"https://api.telegram.org/bot{token}/getUpdates"
 chatID = "5896827510"
 
 def main():
+    print(requests.get(url).json())
     selectionInput = input('1: Fire\n2: Help needed\nWhat is the situation? ')
     locationInput = input('What is the location? ')
     if (int(selectionInput) == 1): 
