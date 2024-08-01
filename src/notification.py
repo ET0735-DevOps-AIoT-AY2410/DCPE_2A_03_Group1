@@ -8,13 +8,10 @@
 # REQ-15	
 # The notification system must include the location of the fire/activated switch within the house to assist first responders
 
-########################################################
-# READ ME READ ME READ ME READ ME READ ME
-# dependency library: requests
 # To send a notification, use sendNotif(type, location)
     # type must be "fire" or "help"
     # location must be a string
-########################################################
+
 import requests 
 
 token = "6745515213:AAFjfoODFwsKv7FUzzdTig-cf-VNDILn80U"
