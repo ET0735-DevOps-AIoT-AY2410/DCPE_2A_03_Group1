@@ -11,7 +11,7 @@ def set_servo_position(position):
     PWM = GPIO.PWM(26,50)
     position = (-10*position)/180 + 12
     PWM.start(position)
-    sleep(0.05)
+    sleep(0.1)
     PWM.stop()
 
 def when_fire_detected(fire_detected):
@@ -28,7 +28,7 @@ def main():
     fireIsDetected = True
     when_fire_detected(fireIsDetected)
     sleep(6)
-    fireIsDetected = True
+    fireIsDetected = False
     when_fire_detected(fireIsDetected)
 
 
