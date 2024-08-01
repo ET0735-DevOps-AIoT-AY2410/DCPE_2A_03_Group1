@@ -1,5 +1,6 @@
 from hal import hal_rfid_reader as rfid 
 from hal import hal_buzzer as buzzer
+import notification as notif
 import RPi.GPIO as GPIO
 
 def main():
@@ -16,7 +17,7 @@ def main():
             print ("false alarm")
             fireDetected = False
             print (id)
-        
+            notif.sendNotif(false_alarm, "")    
         return fireDetected
     
 
