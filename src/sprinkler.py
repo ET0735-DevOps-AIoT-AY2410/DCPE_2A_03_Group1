@@ -15,6 +15,7 @@ def set_servo_position(position):
     PWM.stop()
 
 def when_fire_detected(fire_detected):
+
     if fire_detected == True:
         set_servo_position(180)
     else:    
@@ -23,10 +24,12 @@ def when_fire_detected(fire_detected):
 
 def main():
     init()
+    set_servo_position(0)
     fireIsDetected = True
     when_fire_detected(fireIsDetected)
-    sleep(4)
-
+    sleep(6)
+    fireIsDetected = True
+    when_fire_detected(fireIsDetected)
 
 
 if __name__ =="__main__":
