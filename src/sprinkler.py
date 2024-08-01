@@ -28,7 +28,7 @@ def main():
     fireIsDetected = True
     when_fire_detected(fireIsDetected)
     sleep(6)
-    fireIsDetected = True
+    fireIsDetected = False
     when_fire_detected(fireIsDetected)
 
 
