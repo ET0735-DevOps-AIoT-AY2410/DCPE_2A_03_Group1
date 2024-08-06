@@ -2,6 +2,7 @@ from hal import hal_temp_humidity_sensor as temp
 from hal import hal_adc as adc
 from hal import hal_lcd as LCD
 from hal import hal_led as led
+import mainMenu as menu
 
 import time
 from threading import Thread
@@ -13,19 +14,15 @@ average_temp = 0
 
 fireDetected = False
 
-
-def main():
+def init():
     temp.init()
     adc.init()
-
-    #initialization of HAL modules
     led.init()
- 
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
-    alarm = False
-
+def main():
+    init()
     while (True):
 
         pingtemp()      #run temp
@@ -34,23 +31,27 @@ def main():
         avgTemp()
 
         # alarmStatus()
-
-        listUpdate()
         
         print("avg temperature:" + str(average_temp))
         print("Last 5 temperatures: " + str(temperature_list))
         print("Last 5 light intensity: " + str(adc_list))
 
 def pingtemp():                                 #Capture Temperature Values on last 5 seconds
-    temperature = temp.read_temp_humidity()[0]    
-    time.sleep(1)            
+    temperature = temp.read_temp_humidity()[0]             
     temperature_list.append(temperature)
+
+    if len(temperature_list) > 5:
+        temperature_list.pop(0) 
+
     return temperature_list
 
 def pingadc():                                  #Capture ADC Values on last 5 seconds
     adcvalue = adc.get_adc_value(0)
-    time.sleep(1)
     adc_list.append(adcvalue)
+
+    if len(adc_list) > 5:
+        adc_list.pop(0) 
+
     return adc_list
 
 def avgTemp():
@@ -59,18 +60,18 @@ def avgTemp():
     else:
         average_temp = 0
 
-"""def alarmStatus():
-    if (temperature_list[4] > (average_temp + 5)):
-        alarm = True
+def alarmStatus():
+    tempThres = menu.ReturnTempThres
+    lightThres = menu.ReturnADCThres
+    
+    if(temperature_list[-1] > average_temp):
+        fireDetected = True
     else:
-        alarm = False"""
+        fireDetected = False
 
-def listUpdate():
-    if len(temperature_list) > 5:  
-        temperature_list.pop(0)
-
-    if len(adc_list) > 5:
-        adc_list.pop(0)
+def listUpdate(list):
+    if len(list) > 5:  
+        list.pop(0)
 
 
 
