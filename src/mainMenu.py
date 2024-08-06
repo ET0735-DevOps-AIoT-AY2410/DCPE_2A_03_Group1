@@ -46,22 +46,21 @@ shared_keypad_queue = queue.Queue()
 def key_pressed(key):
     shared_keypad_queue.put(key)
 
-
-def main():
+def init():
     #initialization of HAL modules
-
     keypad.init(key_pressed)
     keypad_thread = Thread(target=keypad.get_key)
     keypad_thread.start()
 
-    lcd = LCD.lcd()
-    lcd.lcd_clear()
+def main():
+    start()
 
-    start(lcd)
     
 
 
-def start(lcd):
+def start():
+    lcd = LCD.lcd()
+    lcd.lcd_clear()
     oldTemperature = 0
     temperature = 0
 
@@ -72,20 +71,15 @@ def start(lcd):
     adjustment = False
     display = False
 
-    temp_list = detection.pingtemp()
-    adc_list = detection.pingadc()
-    detection.listUpdate()
-
     while True:
         while(scanner):
-            lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
-            lcd.lcd_display_string("T:" + temp_list[4] + "L:" + adc_list[4] ,2)
+            displayTemp = detection.pingtemp()[-1]
+            displayAdc = detection.pingadc()[-1]
 
-            temp_list = detection.pingtemp()
-            adc_list = detection.pingadc()
+            lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
+            lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)
 
             keyvalue = shared_keypad_queue.get()
-
             if(keyvalue == 0):                         #if keypad '0' pressed, switch to adjustment system             
                 scanner = False
                 adjustment = True
@@ -100,28 +94,30 @@ def start(lcd):
             if(key == 1):                                             #if keypad = 1, change temp threshold
                 lcd.lcd_clear()
                 lcd.lcd_display_string("Enter Temp Thres", 1)
-                oldTemperature = temperature
+                oldTempThres = newTempThres
 
-                temperature = int(input_from_keypad())
+                newTempThres = int(input_from_keypad())
+                ReturnTempThres(newTempThres)
 
                 lcd.lcd_clear()
                 while(True):
-                    lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
-                    lcd.lcd_display_string("New Temp:" + str(temperature),2)
+                    lcd.lcd_display_string("Old Temp:" + str(oldTempThres),1)
+                    lcd.lcd_display_string("New Temp:" + str(newTempThres),2)
                     if shared_keypad_queue.get() == '*':
                         break
             
             elif(key == 2):                                                   #if keypad = 2, change light threshold
                 lcd.lcd_clear()
                 lcd.lcd_display_string("Enter ADC Thres", 1)
-                oldLight = light 
+                oldLightThres = newLightThres 
 
-                light = int(input_from_keypad())
+                newLightThres = int(input_from_keypad())
+                ReturnADCThres(newLightThres)
 
                 lcd.lcd_clear()
                 while(True):
-                    lcd.lcd_display_string("Old Light:" + str(oldLight),1)
-                    lcd.lcd_display_string("New Light:" + str(light),2)
+                    lcd.lcd_display_string("Old Light:" + str(oldLightThres),1)
+                    lcd.lcd_display_string("New Light:" + str(newLightThres),2)
                     if shared_keypad_queue.get() == '*':
                         break
 
@@ -138,6 +134,13 @@ def input_from_keypad():
             break
         value += str(key)
     return value
+
+def ReturnTempThres(tempThres):
+    return tempThres
+
+def ReturnADCThres(adcThres):
+    return adcThres
+    
 
 
 if __name__ == "__main__":
