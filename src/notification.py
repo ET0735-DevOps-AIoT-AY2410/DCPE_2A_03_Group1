@@ -15,25 +15,27 @@
 import requests 
 
 token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
-url = f"https://api.telegram.org/bot{token}/getUpdates"
 chatID = "5896827510"
 
 def main():
-    print(requests.get(url).json())
-    selectionInput = input('1: Fire\n2: Help needed\nWhat is the situation? ')
+    selectionInput = input('1: Fire\n2: Help needed\n3: False Alarm\nWhat is the situation? ')
     locationInput = input('What is the location? ')
     if (int(selectionInput) == 1): 
         sendNotif("fire", locationInput)
     elif (int(selectionInput) == 2):
         sendNotif("help", locationInput)
+    elif (int(selectionInput) == 3):
+        sendNotif("help", locationInput)
     else:
         print("ERROR: Invalid Selection")
 
 def sendNotif(type, location):
+    token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
+    chatID = "5896827510"
     msgHeader_dict = {
-        "fire" : "FIRE ALARM ACTIVATED",
-        "help" : "URGENT HELP NEEDED",
-        "false_alarm" : "FALSE ALARM. FIRE ALARM DEACTIVATED"
+        "fire" : "FIRE DETECTED. Fire Alarm has been Activated",
+        "help" : "URGENT HELP NEEDED. SOS Switch has been Activated",
+        "false_alarm" : "FALSE ALARM. Fire Alarm has been Deactivated"
     }
     message = f"{msgHeader_dict[type]}\nLocation: {location}"
     url_sendMessage = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatID}&text={message}"
