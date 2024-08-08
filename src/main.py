@@ -16,8 +16,6 @@ alarm_thread_event = Event()
 
 fireDetection = False
 
-
-
 def key_pressed(key):
     shared_keypad_queue.put(key)
 
@@ -67,10 +65,10 @@ def main():
             print(fireDetection)
             if fireDetection:
                 print("in fire mode")
-                #notification.sendNotif("fire","location")
-                #time.sleep(1)
-                #notification.sendNotif("help","location")
-
+                notification.sendNotif("fire","location")
+                time.sleep(1)
+                notification.sendNotif("help","location")
+                
                 if alarm_thread is None or not alarm_thread.is_alive():
                     alarm_thread_event.clear()
                     alarm_thread = Thread(target=alarm_thread_function)
@@ -90,3 +88,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

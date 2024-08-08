@@ -16,8 +16,6 @@ alarm_thread_event = Event()
 
 fireDetection = False
 
-
-
 def key_pressed(key):
     shared_keypad_queue.put(key)
 
