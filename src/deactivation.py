@@ -2,23 +2,25 @@ from hal import hal_rfid_reader as rfid
 from hal import hal_buzzer as buzzer
 import notification as notif
 import RPi.GPIO as GPIO
+import alarm as turnoff
 
 def main():
     reader = rfid.init()
     buzzer.init()
     fireDetected = True
+    false_alarm(reader)
 
-    def false_alarm():
-        id = reader.read_id_no_block()
-        id = str(id)
+def false_alarm(reader):
+    id = reader.read_id_no_block()
+    id = str(id)
 
-        if id != "NONE":
-            GPIO.output(24,0) 
-            print ("false alarm")
-            fireDetected = False
-            print (id)
-            notif.sendNotif(false_alarm, "")    
-        return fireDetected
+    if id != "NONE":
+        turnoff.when_fire_detected(False)
+        print ("false alarm")
+        fireDetected = False
+        print (id)
+        notif.sendNotif(false_alarm, "")    
+    return fireDetected
     
 
 if __name__ == "__main__":

@@ -2,112 +2,99 @@ from hal import hal_temp_humidity_sensor as temp
 from hal import hal_adc as adc
 from hal import hal_lcd as LCD
 from hal import hal_led as led
+import hmi as menu
 
 import time
 from threading import Thread
 import queue
 
-temperature_list = []
-adc_list = []    
-average_temp = 0
-
-fireDetected = False
-
-
-def main():
+def init():
     temp.init()
     adc.init()
-<<<<<<< HEAD
-    
-    temperature_list = []
-    adc_list = []    
-    lcd = LCD.lcd()
-    lcd.lcd_clear
-
-    while (True):
-        def pingtemp():
-            temperature = temp.read_temp_humidity()
-            temperature_list.append(temperature)
-
-        def pingadc():
-            adcvalue = adc.get_adc_value()
-            adc_list.append(adcvalue)
-
-        if len(temperature_list) > 5:  
-            temperature_list.pop(0)
-
-        if len(adc_list) > 5:
-            adc_list.pop(0)
-        
-        lcd.lcd_display_string ("Last 5 temperature" + temperature_list, 1)
-        lcd.lcd_display_string ("Last 5 light intensity" + adc_list, 2)
-        
-        if len(temperature_list) == 5:
-            avg_temp = sum(temperature_list) / len(temperature_list)
-        
-        if len(adc_list) == 5:
-            avg_intensity
-=======
-
-    #initialization of HAL modules
     led.init()
- 
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
-    alarm = False
 
+def alarmStatus():
+    fireDetected = False
+    tempThres = 500
+    lightThres = 1000
+
+    temperature_list = pingtemp()
+    adc_list = pingadc()
+
+    average_temp = avgTemp(temperature_list)
+
+    average_adc = avgADC(adc_list)
+    
+    if(average_temp > tempThres or average_adc > lightThres):
+        fireDetected = True
+    else:
+        fireDetected = False
+
+    tempThres = menu.ReturnTempThres
+    lightThres = menu.ReturnADCThres
+
+    return fireDetected
+
+def pingtemp():    
+    temperature_list = []                           #Capture Temperature Values on last 5 seconds
+    
+    temperature = temp.read_temp_humidity()[0]             
+    temperature_list.append(temperature)
+
+    if len(temperature_list) > 5:
+        temperature_list.pop(0) 
+
+    return temperature_list
+
+def pingadc():                                  #Capture ADC Values on last 5 seconds
+    adc_list = []  
+    
+    adcvalue = adc.get_adc_value(0)
+    adc_list.append(adcvalue)
+
+    if len(adc_list) > 5:
+        adc_list.pop(0) 
+
+    return adc_list
+
+def avgADC(adc_list):
+    average_adc = 0
+    if len(adc_list) > 0:
+        average_adc = sum(adc_list) / len(adc_list)
+    else:
+        average_adc = 0
+    return average_adc
+
+def avgTemp(temperature_list):
+    average_temp = 0
+    if len(temperature_list) > 0:                                           #Calculate Average Temperature
+        average_temp = sum(temperature_list) / len(temperature_list)
+    else:
+        average_temp = 0
+    return average_temp
+
+def listUpdate(list):
+    if len(list) > 5:  
+        list.pop(0)
+
+
+
+def main():
+    init()
     while (True):
-
         pingtemp()      #run temp
         pingadc()       #run adc
-
-        avgTemp()
-
-        # alarmStatus()
-
-        listUpdate()
+        average_temp = avgTemp()
         
         print("avg temperature:" + str(average_temp))
         print("Last 5 temperatures: " + str(temperature_list))
         print("Last 5 light intensity: " + str(adc_list))
 
-def pingtemp():                                 #Capture Temperature Values on last 5 seconds
-    temperature = temp.read_temp_humidity()[0]    
-    time.sleep(1)            
-    temperature_list.append(temperature)
-
-def pingadc():                                  #Capture ADC Values on last 5 seconds
-    adcvalue = adc.get_adc_value(0)
-    time.sleep(1)
-    adc_list.append(adcvalue)
-
-def avgTemp():
-    if len(temperature_list) > 0:                                           #Calculate Average Temperature
-        average_temp = sum(temperature_list) / len(temperature_list)
-    else:
-        average_temp = 0
-
-"""def alarmStatus():
-    if (temperature_list[4] > (average_temp + 5)):
-        alarm = True
-    else:
-        alarm = False"""
-
-def listUpdate():
-    if len(temperature_list) > 5:  
-        temperature_list.pop(0)
-
-    if len(adc_list) > 5:
-        adc_list.pop(0)
-
-
-
-
-
 if __name__ == "__main__":
     main()
->>>>>>> master
 
 # REQ-04	
 # Constantly ping sensors to collect data on the temperature and light intensity in the surroundings. Store the last 5 recorded data (of temperature and light intensity) in an array. 
