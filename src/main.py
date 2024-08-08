@@ -14,15 +14,17 @@ shared_keypad_queue = queue.Queue()
 alarm_thread = None
 alarm_thread_event = Event()
 
+fireDetection = False
+
 
 
 def key_pressed(key):
     shared_keypad_queue.put(key)
 
 def alarm_thread_function():
-    fireDetected = True
+    
     while not alarm_thread_event.is_set():
-        alarm.when_fire_detected(fireDetected)
+        alarm.when_fire_detected(fireDetection)
 
 def main():
     # Initialize Components
@@ -37,7 +39,7 @@ def main():
     scanning = True
     adjustment = False
     
-    sos.threadStartSOS()
+    #sos.threadStartSOS()
 
     # Start Threads
 
@@ -65,9 +67,9 @@ def main():
             print(fireDetection)
             if fireDetection:
                 print("in fire mode")
-                notification.sendNotif("fire","location")
-                time.sleep(1)
-                notification.sendNotif("help","location")
+                #notification.sendNotif("fire","location")
+                #time.sleep(1)
+                #notification.sendNotif("help","location")
 
                 if alarm_thread is None or not alarm_thread.is_alive():
                     alarm_thread_event.clear()
@@ -79,7 +81,7 @@ def main():
                     alarm_thread_event.set()
                     alarm_thread.join()  # Wait for the thread to finish
 
-                sos.isSwitchON()
+                
 
         while(adjustment):                #go back to scanner after adjusting threshold
             menu.adjustMode()
