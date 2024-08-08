@@ -8,19 +8,21 @@ import sos_switch as sos
 import sprinkler
 import hmi as menu
 import queue
+from hal import hal_keypad as keypad
 
 shared_keypad_queue = queue.Queue()
-scanning = True
-adjustment = False
 alarm_thread = None
 alarm_thread_event = Event()
+
+
 
 def key_pressed(key):
     shared_keypad_queue.put(key)
 
 def alarm_thread_function():
+    fireDetected = True
     while not alarm_thread_event.is_set():
-        alarm.when_fire_detected()
+        alarm.when_fire_detected(fireDetected)
 
 def main():
     # Initialize Components
@@ -28,28 +30,43 @@ def main():
     detection.init()
     sprinkler.init()
     sos.init()
-    menu.init()
+    keypad.init(key_pressed)
+    keypad_thread = Thread(target=keypad.get_key)
+    keypad_thread.start()
+
+    scanning = True
+    adjustment = False
     
+    sos.threadStartSOS()
+
     # Start Threads
-    sos_thread = Thread(target=sos.switchON)
-    sos_thread.start()
 
     global alarm_thread
     alarm_thread_event.clear()
 
     while True:
         while(scanning):
-            menu.scannerMode()
+            menu.scannerModeThread()
 
-            keyvalue = shared_keypad_queue.get()
+            try:
+                keyvalue = shared_keypad_queue.get_nowait()
+            except queue.Empty:
+                keyvalue = None
+            #keyvalue = shared_keypad_queue.get_nowait()
+            print("test hello")
+            print(keyvalue)
+
             if(keyvalue == 0):                  #if keypad '0' pressed, switch to adjustment system             
                 scanning = False
                 adjustment = True
-
+            
             fireDetection = detection.alarmStatus()
+            print("test alarm")
             print(fireDetection)
             if fireDetection:
+                print("in fire mode")
                 notification.sendNotif("fire","location")
+                time.sleep(1)
                 notification.sendNotif("help","location")
 
                 if alarm_thread is None or not alarm_thread.is_alive():

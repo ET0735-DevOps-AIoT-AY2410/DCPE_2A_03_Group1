@@ -18,20 +18,23 @@ def init():
 
 def alarmStatus():
     fireDetected = False
-
-    tempThres = menu.ReturnTempThres
-    lightThres = menu.ReturnADCThres
+    tempThres = 500
+    lightThres = 1000
 
     temperature_list = pingtemp()
     adc_list = pingadc()
 
     average_temp = avgTemp(temperature_list)
+
     average_adc = avgADC(adc_list)
     
-    if(average_temp > tempThres or average_adc> lightThres):
+    if(average_temp > tempThres or average_adc > lightThres):
         fireDetected = True
     else:
         fireDetected = False
+
+    tempThres = menu.ReturnTempThres
+    lightThres = menu.ReturnADCThres
 
     return fireDetected
 

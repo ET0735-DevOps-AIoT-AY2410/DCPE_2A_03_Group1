@@ -34,9 +34,20 @@ def scannerMode():
     lcd.lcd_display_string("Sensors Scanning", 1)                    #Display Scanning & Temp/Light values
     lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)
 
+def scannerModeThread():
+    scanner_thread = Thread(target=scannerMode)
+    scanner_thread.start()
+
+def adjustModeThread():
+    adjust_thread = Thread(target=adjustMode)
+    adjust_thread.start()
+    
+
 def adjustMode():
     lcd = LCD.lcd()
-
+    
+    global newTempThres   
+    
     oldTempThres = 0
     newTempThres = 0
 
@@ -49,13 +60,13 @@ def adjustMode():
 
     key = shared_keypad_queue.get()
 
-    if(key == 1):                                             #if keypad = 1, change temp threshold
+    if(key == 1):                                          #if keypad = 1, change temp threshold
         lcd.lcd_clear()
         lcd.lcd_display_string("Enter Temp Thres", 1)
         oldTempThres = newTempThres
 
         newTempThres = int(input_from_keypad())
-        ReturnTempThres(newTempThres)
+        ReturnTempThres()
 
         lcd.lcd_clear()
         while(True):
@@ -89,8 +100,8 @@ def input_from_keypad():
         value += str(key)
     return value
 
-def ReturnTempThres(tempThres):
-    return tempThres
+def ReturnTempThres():
+    return newTempThres
 
 def ReturnADCThres(adcThres):
     return adcThres
