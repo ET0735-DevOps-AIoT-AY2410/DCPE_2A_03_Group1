@@ -17,37 +17,6 @@ fireDetected = False
 def main():
     temp.init()
     adc.init()
-<<<<<<< HEAD
-    
-    temperature_list = []
-    adc_list = []    
-    lcd = LCD.lcd()
-    lcd.lcd_clear
-
-    while (True):
-        def pingtemp():
-            temperature = temp.read_temp_humidity()
-            temperature_list.append(temperature)
-
-        def pingadc():
-            adcvalue = adc.get_adc_value()
-            adc_list.append(adcvalue)
-
-        if len(temperature_list) > 5:  
-            temperature_list.pop(0)
-
-        if len(adc_list) > 5:
-            adc_list.pop(0)
-        
-        lcd.lcd_display_string ("Last 5 temperature" + temperature_list, 1)
-        lcd.lcd_display_string ("Last 5 light intensity" + adc_list, 2)
-        
-        if len(temperature_list) == 5:
-            avg_temp = sum(temperature_list) / len(temperature_list)
-        
-        if len(adc_list) == 5:
-            avg_intensity
-=======
 
     #initialization of HAL modules
     led.init()
@@ -76,11 +45,13 @@ def pingtemp():                                 #Capture Temperature Values on l
     temperature = temp.read_temp_humidity()[0]    
     time.sleep(1)            
     temperature_list.append(temperature)
+    return temperature_list
 
 def pingadc():                                  #Capture ADC Values on last 5 seconds
     adcvalue = adc.get_adc_value(0)
     time.sleep(1)
     adc_list.append(adcvalue)
+    return adc_list
 
 def avgTemp():
     if len(temperature_list) > 0:                                           #Calculate Average Temperature
@@ -107,7 +78,6 @@ def listUpdate():
 
 if __name__ == "__main__":
     main()
->>>>>>> master
 
 # REQ-04	
 # Constantly ping sensors to collect data on the temperature and light intensity in the surroundings. Store the last 5 recorded data (of temperature and light intensity) in an array. 
@@ -131,6 +101,3 @@ if __name__ == "__main__":
 # LCD will momentarily override main menu and display:
 #	Line 1 = “No Fire Detected”
 #	Line 2 = “Temp:xx Light:xx”
-
-
-
