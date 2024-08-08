@@ -1,6 +1,7 @@
 import time
 from time import sleep
 import RPi.GPIO as GPIO
+from threading import Thread
 
 
 #i assumed fire is detected (fireisdetected = true in main), so the fireIsDetected in main stays true to see if buzzer and led blinks as required.
@@ -19,7 +20,11 @@ def when_fire_detected(fireDetected):
         GPIO.output(24,0) #off
         GPIO.output(18,0)
         sleep(1)
-        #i think shld be 0.5hz..? im not sure tho 
+
+
+def alarmThread(fireIsDetected):
+alarm_thread=Thread(target= when_fire_detected, args= (fireIsDetected, ))
+alarm_thread.start()
 
 def main():
     init()
