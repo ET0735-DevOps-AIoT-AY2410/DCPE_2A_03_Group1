@@ -70,45 +70,65 @@ def start(lcd):
 
     scanner = True
     adjustment = False
+    display = False
 
-    while(scanner):
-        lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
-        lcd.lcd_display_string("Temp:1 Light:2" ,2)
+    temp_list = detection.pingtemp()
+    adc_list = detection.pingadc()
+    detection.listUpdate()
 
-        keyvalue = shared_keypad_queue.get()
+    while True:
+        while(scanner):
+            lcd.lcd_display_string("Sensors Scanning", 1)                                                      #Display Scanning & Temp/Light values
+            lcd.lcd_display_string("T:" + temp_list[4] + "L:" + adc_list[4] ,2)
 
-        if(keyvalue == 0):                         #if keypad '0' pressed, switch to adjustment system             
-            scanner = False
-            adjustment = True
+            temp_list = detection.pingtemp()
+            adc_list = detection.pingadc()
 
-    while(adjustment):
-        lcd.lcd_clear()
-        lcd.lcd_display_string("Temp Thres:'1'", 1)
-        lcd.lcd_display_string("Light Thres:'2'", 2)
+            keyvalue = shared_keypad_queue.get()
 
-        key = shared_keypad_queue.get()
+            if(keyvalue == 0):                         #if keypad '0' pressed, switch to adjustment system             
+                scanner = False
+                adjustment = True
 
-        if(key == 1):                                             #if keypad = 1, change temp threshold
+        while(adjustment):
             lcd.lcd_clear()
-            lcd.lcd_display_string("Enter Temp Thres", 1)
-            oldTemperature = temperature
+            lcd.lcd_display_string("Temp Thres:'1'", 1)
+            lcd.lcd_display_string("Light Thres:'2'", 2)
 
-            temperature = int(input_from_keypad())
+            key = shared_keypad_queue.get()
 
-            lcd.lcd_clear()
-            lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
-            lcd.lcd_display_string("New Temp:" + str(temperature),2)
-        elif(key == 2):                                                   #if keypad = 2, change light threshold
-            lcd.lcd_clear()
-            lcd.lcd_display_string("Enter ADC Thres", 1)
-            oldLight = light 
+            if(key == 1):                                             #if keypad = 1, change temp threshold
+                lcd.lcd_clear()
+                lcd.lcd_display_string("Enter Temp Thres", 1)
+                oldTemperature = temperature
 
-            light = int(input_from_keypad())
+                temperature = int(input_from_keypad())
 
-            lcd.lcd_clear()
-            lcd.lcd_display_string("Old Light:" + str(oldLight),1)
-            lcd.lcd_display_string("New Light:" + str(light),2)
+                lcd.lcd_clear()
+                while(True):
+                    lcd.lcd_display_string("Old Temp:" + str(oldTemperature),1)
+                    lcd.lcd_display_string("New Temp:" + str(temperature),2)
+                    if shared_keypad_queue.get() == '*':
+                        break
+            
+            elif(key == 2):                                                   #if keypad = 2, change light threshold
+                lcd.lcd_clear()
+                lcd.lcd_display_string("Enter ADC Thres", 1)
+                oldLight = light 
 
+                light = int(input_from_keypad())
+
+                lcd.lcd_clear()
+                while(True):
+                    lcd.lcd_display_string("Old Light:" + str(oldLight),1)
+                    lcd.lcd_display_string("New Light:" + str(light),2)
+                    if shared_keypad_queue.get() == '*':
+                        break
+
+            
+            #Exit adjustment mode and return to scanner mode
+            adjustment = False
+            scanner = True
     
 def input_from_keypad():
     value = ""
@@ -116,10 +136,12 @@ def input_from_keypad():
         key = shared_keypad_queue.get()
         if key == '#':                  #key # to break away from entering value
             break
-        value = str(key)
+        value += str(key)
     return value
 
-        
 
 if __name__ == "__main__":
     main()
+
+
+
