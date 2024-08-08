@@ -8,12 +8,6 @@ import time
 from threading import Thread
 import queue
 
-temperature_list = []
-adc_list = []    
-average_temp = 0
-
-fireDetected = False
-
 def init():
     temp.init()
     adc.init()
@@ -21,22 +15,29 @@ def init():
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
-def main():
-    init()
-    while (True):
 
-        pingtemp()      #run temp
-        pingadc()       #run adc
+def alarmStatus():
+    fireDetected = False
 
-        avgTemp()
+    tempThres = menu.ReturnTempThres
+    lightThres = menu.ReturnADCThres
 
-        # alarmStatus()
-        
-        print("avg temperature:" + str(average_temp))
-        print("Last 5 temperatures: " + str(temperature_list))
-        print("Last 5 light intensity: " + str(adc_list))
+    temperature_list = pingtemp()
+    adc_list = pingadc()
 
-def pingtemp():                                 #Capture Temperature Values on last 5 seconds
+    average_temp = avgTemp(temperature_list)
+    average_adc = avgADC(adc_list)
+    
+    if(average_temp > tempThres or average_adc> lightThres):
+        fireDetected = True
+    else:
+        fireDetected = False
+
+    return fireDetected
+
+def pingtemp():    
+    temperature_list = []                           #Capture Temperature Values on last 5 seconds
+    
     temperature = temp.read_temp_humidity()[0]             
     temperature_list.append(temperature)
 
@@ -46,6 +47,8 @@ def pingtemp():                                 #Capture Temperature Values on l
     return temperature_list
 
 def pingadc():                                  #Capture ADC Values on last 5 seconds
+    adc_list = []  
+    
     adcvalue = adc.get_adc_value(0)
     adc_list.append(adcvalue)
 
@@ -54,22 +57,21 @@ def pingadc():                                  #Capture ADC Values on last 5 se
 
     return adc_list
 
-def avgTemp():
-    global average_temp
+def avgADC(adc_list):
+    average_adc = 0
+    if len(adc_list) > 0:
+        average_adc = sum(adc_list) / len(adc_list)
+    else:
+        average_adc = 0
+    return average_adc
+
+def avgTemp(temperature_list):
+    average_temp = 0
     if len(temperature_list) > 0:                                           #Calculate Average Temperature
         average_temp = sum(temperature_list) / len(temperature_list)
     else:
         average_temp = 0
-
-def alarmStatus():
-    global fireDetected
-    tempThres = menu.ReturnTempThres
-    lightThres = menu.ReturnADCThres
-    
-    if(average_temp > tempThres or average_temp> lightThres):
-        fireDetected = True
-    else:
-        fireDetected = False
+    return average_temp
 
 def listUpdate(list):
     if len(list) > 5:  
@@ -77,7 +79,16 @@ def listUpdate(list):
 
 
 
-
+def main():
+    init()
+    while (True):
+        pingtemp()      #run temp
+        pingadc()       #run adc
+        average_temp = avgTemp()
+        
+        print("avg temperature:" + str(average_temp))
+        print("Last 5 temperatures: " + str(temperature_list))
+        print("Last 5 light intensity: " + str(adc_list))
 
 if __name__ == "__main__":
     main()
