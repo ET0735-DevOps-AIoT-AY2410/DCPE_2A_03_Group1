@@ -30,8 +30,8 @@ def when_fire_detected(fireDetected):
 
 
 def alarmThread(fireIsDetected):
-alarm_thread=Thread(target= when_fire_detected, args= (fireIsDetected, ))
-alarm_thread.start()
+    alarm_thread=Thread(target= when_fire_detected, args= (fireIsDetected, ))
+    alarm_thread.start()
 
 def main():
     init()
