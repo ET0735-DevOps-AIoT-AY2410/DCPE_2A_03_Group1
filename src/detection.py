@@ -2,7 +2,7 @@ from hal import hal_temp_humidity_sensor as temp
 from hal import hal_adc as adc
 from hal import hal_lcd as LCD
 from hal import hal_led as led
-import mainMenu as menu
+import hmi as menu
 
 import time
 from threading import Thread
@@ -55,16 +55,18 @@ def pingadc():                                  #Capture ADC Values on last 5 se
     return adc_list
 
 def avgTemp():
+    global average_temp
     if len(temperature_list) > 0:                                           #Calculate Average Temperature
         average_temp = sum(temperature_list) / len(temperature_list)
     else:
         average_temp = 0
 
 def alarmStatus():
+    global fireDetected
     tempThres = menu.ReturnTempThres
     lightThres = menu.ReturnADCThres
     
-    if(temperature_list[-1] > average_temp):
+    if(average_temp > tempThres or average_temp> lightThres):
         fireDetected = True
     else:
         fireDetected = False

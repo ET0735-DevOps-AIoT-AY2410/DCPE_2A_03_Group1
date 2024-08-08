@@ -3,31 +3,28 @@ import time
 from time import sleep
 from hal import hal_lcd as LCD
 import notification
+from hal import hal_input_switch as switch
 
 helpNeeded = False
 
 def init():
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)   #setup for switch
+    switch.init()
 
-def switchON():
+def isSwitchON():
     while True:
-        start_time = None
-        if GPIO.input(17) == GPIO.LOW:
-            start_time = time.time() #initialize starting time
-
-            while GPIO.input(17) == GPIO.LOW:
-                if time.time() - start_time >= 3:
-                    helpNeeded = True
-                    print("Help Needed!")
-                    LCD.lcd().lcd_clear
-                    LCD.lcd().lcd_display_string("Help Needed!",1)
-                    notification.sendNotif("help", "")    #Alert
-                    break
+        if switch.read_slide_switch() == 0:
+            helpNeeded = True
+            print("Help Needed!")
+            LCD.lcd.lcd_clear
+            LCD.lcd().lcd_display_string("Help Needed!",1)
+            notification.sendNotif("help", "switch")    #Alert
+        else:
+            print("No help needed")
+            
 
 def main():
     init()
-    switchON()
     
                     
 if __name__ == "__main__":
