@@ -10,7 +10,7 @@ def init():
     GPIO.setmode(GPIO.BCM)
     switch.init()
 
-def threadStartSOS(): # calls detached thread
+def thread_isSwitchON(): # calls detached thread
     sos_thread = Thread(target=isSwitchON)
     sos_thread.start()
 
