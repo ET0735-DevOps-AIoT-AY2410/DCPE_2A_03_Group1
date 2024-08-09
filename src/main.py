@@ -10,27 +10,29 @@ import hmi as menu
 import queue
 from hal import hal_keypad as keypad
 
-fireDetection = False
-
-def main():
-    # Initialize Components
+def init():
     alarm.init()
     detection.init()
     sprinkler.init()
     sos.init()
     menu.init()
+
+def start_threads():
+    sos.thread_isSwitchON()
+    alarm.thread_when_fire_detected()
+
+def main():
+    init() # Initialize Components
+    start_threads() # Start all necessary detached threads
+
+    global scanning, fireDetection
     scanning = True
-    
-    sos.threadStartSOS()
-    # Start Alarm Thread
-    alarm.alarmThread()
+    fireDetection = False
 
     while True:
-        menu.adjustMode()
-        print("test adjust")
-           #adjustment mode
+        # SCANNING MODE
         while(scanning):
-            menu.scannerModeThread()            #scanner mode
+            menu.thread_scannerMode()
             print("test scanner")   
             
             fireDetection = detection.alarmStatus()
@@ -40,7 +42,6 @@ def main():
             if fireDetection:
                 print("in fire mode")
                 notification.sendNotif("fire","location")
-                notification.sendNotif("help","location")
                 print("test notification")
 
                 alarm.alarm_thread_event.set()  # Start the alarm thread
@@ -53,6 +54,15 @@ def main():
                 alarm.alarm_thread_event.clear() # Stop the alarm thread
                 print("test stop alarm thread")
                 #deactivation.false_alarm()     
+
+            if(keyvalue == 0):                  #if keypad '0' pressed, switch to adjustment system             
+                scanning = False
+                adjustment = True
+        # ADJUSTMENT MODE
+        while(adjustment):                #go back to scanner after adjusting threshold
+            menu.adjustMode()
+            scanning = True
+            adjustment = False
 
 if __name__ == "__main__":
     main()
