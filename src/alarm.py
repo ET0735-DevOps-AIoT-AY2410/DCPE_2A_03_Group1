@@ -33,7 +33,7 @@ def when_fire_detected():
         sleep(1)
 
 
-def alarmThread():
+def thread_when_fire_detected():
     alarm_thread=Thread(target= when_fire_detected)
     alarm_thread.daemon = True
     alarm_thread.start()
