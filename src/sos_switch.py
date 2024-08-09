@@ -21,9 +21,11 @@ def isSwitchON():
             print("SOS Switch Activated!")
             notification.sendNotif("help", "switch")
             while (switch.read_slide_switch() == 0):
-                time.sleep(0.5) # freeze code until switch OFF
+                time.sleep(0.1) # freeze code until switch OFF
         else: # switch OFF
             print("SOS Switch Deactivated.")
+            while (switch.read_slide_switch() == 1):
+                time.sleep(0.1) # freeze code until switch ON
     
 # REQ-09	
 # When the manual SOS switch (slide switch) is switched to ON for 3s, then update the bool helpNeeded to True. Which immediately alert for help
