@@ -39,6 +39,12 @@ The IoT Smart Fire Alert System is designed to enhance fire safety, specifically
 - **Libraries**:
   - RPi.GPIO (for Raspberry Pi GPIO control)
   - SMS API (for SMS notifications)
+## Installation
+Build the Docker Image: Run the following command in your terminal from the root of your project to build the Docker image.
+- docker build -t my-raspi-app .
+
+Run the Docker Container: After building the image, you can run the container with:
+- docker run --privileged -it --rm my-raspi-app
 ## Contributors
 - **Wong Xian Zhe**:
   - Main, Hmi, SOS Switch
