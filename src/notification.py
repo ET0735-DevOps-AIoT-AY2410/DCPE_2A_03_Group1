@@ -36,8 +36,8 @@ def sendNotif(type, location): # call this function from other codes
     }
     message = f"{msgHeader_dict[type]}\nLocation: {location}"
     url_sendMessage = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatID}&text={message}"
-    print(requests.get(url_sendMessage).json()) # sends msg
-    print("Notification of type: " + str(type) + " sent to SCDF_Bot")
+    requests.get(url_sendMessage).json() # sends msg
+    print("Notification of type: " + str(type) + " sent to SCDF_Bot.")
 
 if __name__ == "__main__":
     while(True):
