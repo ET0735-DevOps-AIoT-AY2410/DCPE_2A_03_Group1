@@ -27,32 +27,28 @@ def lcdStart():
 
 def scannerMode():
     lcd = LCD.lcd()
-
-    displayTemp = detection.pingtemp()[-1]
-    displayAdc = detection.pingadc()[-1]
-
-    lcd.lcd_display_string("Sensors Scanning", 1)                    #Display Scanning & Temp/Light values
-    lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)
-
-def scannerModeThread():
-    scanner_thread = Thread(target=scannerMode)
-    scanner_thread.start()
-
-def adjustModeThread():
-    adjust_thread = Thread(target=adjustMode)
-    adjust_thread.start()
+    lcd.lcd_clear()
+    lcd.lcd_display_string("Scanning Now", 1)
     
+    while True:
+        displayTemp = detection.pingtemp()[-1]
+        displayAdc = detection.pingadc()[-1]
+
+        lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)                #Display Scanning & Temp/Light values
+        time.sleep(3)
 
 def adjustMode():
     lcd = LCD.lcd()
-    
-    global newTempThres   
-    
+    global newTempThres
+    global newLightThres 
     oldTempThres = 0
     newTempThres = 0
-
     oldLightThres = 0
     newLightThres = 0
+    lcd.lcd_clear()
+    lcd.lcd_display_string("Welcome to", 1)
+    lcd.lcd_display_string("Adjustment Mode", 2)
+    time.sleep(3)
 
     lcd.lcd_clear()
     lcd.lcd_display_string("Temp Thres:'1'", 1)
@@ -66,7 +62,7 @@ def adjustMode():
         oldTempThres = newTempThres
 
         newTempThres = int(input_from_keypad())
-        ReturnTempThres()
+        print("newTempThres", newTempThres)
 
         lcd.lcd_clear()
         while(True):
@@ -81,7 +77,7 @@ def adjustMode():
         oldLightThres = newLightThres 
 
         newLightThres = int(input_from_keypad())
-        ReturnADCThres(newLightThres)
+        print("newLightThres", newLightThres)
 
         lcd.lcd_clear()
         while(True):
@@ -90,6 +86,13 @@ def adjustMode():
             if shared_keypad_queue.get() == '*':
                 break
 
+def scannerModeThread():
+    scanner_thread = Thread(target=scannerMode)
+    scanner_thread.start()
+
+def adjustModeThread():
+    adjust_thread = Thread(target=adjustMode)
+    adjust_thread.start()
 
 def input_from_keypad():
     value = ""
@@ -99,12 +102,6 @@ def input_from_keypad():
             break
         value += str(key)
     return value
-
-def ReturnTempThres():
-    return newTempThres
-
-def ReturnADCThres(adcThres):
-    return adcThres
 
 if __name__ == "__main__":
     main()

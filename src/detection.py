@@ -18,23 +18,19 @@ def init():
 
 def alarmStatus():
     fireDetected = False
-    tempThres = 500
-    lightThres = 1000
+    #tempThres = 500
+    #lightThres = 1000
 
     temperature_list = pingtemp()
     adc_list = pingadc()
 
     average_temp = avgTemp(temperature_list)
-
     average_adc = avgADC(adc_list)
     
-    if(average_temp > tempThres or average_adc > lightThres):
+    if(average_temp > menu.newTempThres or average_adc > menu.newLightThres):
         fireDetected = True
     else:
         fireDetected = False
-
-    tempThres = menu.ReturnTempThres
-    lightThres = menu.ReturnADCThres
 
     return fireDetected
 
@@ -42,7 +38,7 @@ def pingtemp():
     temperature_list = []                           #Capture Temperature Values on last 5 seconds
     
     temperature = temp.read_temp_humidity()[0]  
-    time.sleep(3)           
+    time.sleep(1)           
     temperature_list.append(temperature)
 
     if len(temperature_list) > 5:
@@ -54,7 +50,7 @@ def pingadc():                                  #Capture ADC Values on last 5 se
     adc_list = []  
     
     adcvalue = adc.get_adc_value(0)
-    time.sleep(3)
+    time.sleep(1)
     adc_list.append(adcvalue)
 
     if len(adc_list) > 5:

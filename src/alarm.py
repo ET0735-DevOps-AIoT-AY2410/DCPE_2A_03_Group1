@@ -8,7 +8,10 @@
 import time
 from time import sleep
 import RPi.GPIO as GPIO
-from threading import Thread
+from threading import Thread, Event
+
+
+alarm_thread_event = Event()
 
 
 #i assumed fire is detected (fireisdetected = true in main), so the fireIsDetected in main stays true to see if buzzer and led blinks as required.
@@ -19,8 +22,9 @@ def init():
     GPIO.setup(24, GPIO.OUT)  #gpio24 for led
     GPIO.setup(18, GPIO.OUT)  #gpio25 for buzzer
 
-def when_fire_detected(fireDetected):
-    while fireDetected == True:
+def when_fire_detected():
+    while True:
+        alarm_thread_event.wait()  # Wait until the event is set
         GPIO.output(24,1) #on
         GPIO.output(18,1)
         sleep(1)
@@ -29,8 +33,9 @@ def when_fire_detected(fireDetected):
         sleep(1)
 
 
-def alarmThread(fireIsDetected):
-    alarm_thread=Thread(target= when_fire_detected, args= (fireIsDetected, ))
+def alarmThread():
+    alarm_thread=Thread(target= when_fire_detected)
+    alarm_thread.daemon = True
     alarm_thread.start()
 
 def main():
