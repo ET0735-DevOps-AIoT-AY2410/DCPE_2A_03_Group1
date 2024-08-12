@@ -3,27 +3,39 @@ from hal import hal_buzzer as buzzer
 import notification as notif
 import RPi.GPIO as GPIO
 import alarm as turnoff
-import threading
+from threading import Thread
+import time
+
+fireDetected = False
 
 def main():
     reader = rfid.init()
     buzzer.init()
-    fireDetected = True
-    false_alarm(reader)
+    global fireDetected 
+    rfid_scan(reader)
 
-def false_alarm(reader):
-    id = reader.read_id_no_block()
-    id = str(id)
-    print ("RFID id: " + id)
+    rfid_thread = Thread(target=rfid_scan, args=(reader,))
+    rfid_thread.start()
     fireDetected = True
-    turnoff.when_fire_detected(fireDetected)
+    turnoff.when_fire_detected(fireDetected )
 
-    if id != "NONE":
-        print ("false alarm")
-        fireDetected = True
-        turnoff.when_fire_detected(fireDetected)
-        notif.sendNotif(false_alarm, "Singapore Polytechnic")    
-    return fireDetected
+
+def rfid_scan(reader):  
+    global fireDetected
+    while True:
+        if fireDetected:
+            id = reader.read_id_no_block()
+            id = str(id)
+            print ("RFID id: " + id)
+            fireDetected = False
+            turnoff_alarm()
+            notif.sendNotif("false_alarm", "Singapore Polytechnic")    
+        time (0.5)
+
+def turnoff_alarm():
+    GPIO.output(24, 0)
+    GPIO.output(18, 0)    
+        
     
 
 if __name__ == "__main__":
