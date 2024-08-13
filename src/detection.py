@@ -120,6 +120,3 @@ if __name__ == "__main__":
 # LCD will momentarily override main menu and display:
 #	Line 1 = “No Fire Detected”
 #	Line 2 = “Temp:xx Light:xx”
-
-
-
