@@ -49,8 +49,8 @@ Run the Docker Container: After building the image, you can run the container wi
 - **Wong Xian Zhe**:
   - Main, Hmi, SOS Switch
 - **Bryan Ong Jia Le**:
-  - SCDF Notification, Main
+  - Main, Notification
 - **Avadhanam Srihari Anirudh**:
-  - Fire Detection, Deactivation
+  - Main, Fire Detection, Deactivation
 - **Shune Lai Hlaing Hmee**:
-  - Alarm System, Sprinkler System
+  - Main, Alarm System, Sprinkler System, Deactivation

@@ -8,84 +8,70 @@ import sos_switch as sos
 import sprinkler
 import hmi as menu
 import queue
-from hal import hal_keypad as keypad
+import keypad
 
-shared_keypad_queue = queue.Queue()
-alarm_thread = None
-alarm_thread_event = Event()
-
+scanning = True
+adjustment = False
 fireDetection = False
+tempThres = 40
+lightThres = 170
 
-def key_pressed(key):
-    shared_keypad_queue.put(key)
-
-def alarm_thread_function():
-    
-    while not alarm_thread_event.is_set():
-        alarm.when_fire_detected(fireDetection)
-
-def main():
-    # Initialize Components
+def init():
     alarm.init()
     detection.init()
     sprinkler.init()
     sos.init()
-    keypad.init(key_pressed)
-    keypad_thread = Thread(target=keypad.get_key)
-    keypad_thread.start()
+    menu.init()
 
-    scanning = True
-    adjustment = False
+def start_threads():
+    sos.thread_isSwitchON()
+    keypad.keypadThread()
+
+def main():
+    global scanning, adjustment, fireDetection, tempThres, lightThres
+    fireDetectionCooldown = False
+
+    init() # Initialize Components
+    start_threads() # Start all necessary detached threads
     
-    #sos.threadStartSOS()
-
-    # Start Threads
-
-    global alarm_thread
-    alarm_thread_event.clear()
-
     while True:
+        # SCANNING MODE
         while(scanning):
-            menu.scannerModeThread()
+            print ("entered scanning")
+            menu.scannerMode()
+            if detection.alarmStatus() == True:
+                fireDetection = True
 
-            try:
-                keyvalue = shared_keypad_queue.get_nowait()
-            except queue.Empty:
-                keyvalue = None
-            #keyvalue = shared_keypad_queue.get_nowait()
-            print("test hello")
-            print(keyvalue)
-
-            if(keyvalue == 0):                  #if keypad '0' pressed, switch to adjustment system             
-                scanning = False
-                adjustment = True
-            
-            fireDetection = detection.alarmStatus()
-            print("test alarm")
-            print(fireDetection)
             if fireDetection:
-                print("in fire mode")
-                notification.sendNotif("fire","location")
-                time.sleep(1)
-                notification.sendNotif("help","location")
+                if fireDetectionCooldown == False: # this cooldown is so that it only sends notif ONCE
+                    fireDetectionCooldown = True
+                    deactivation.rfidThread(fireDetection)   #deactivation of fire alarm
+                    notification.sendNotif("fire","location")
+                    alarm.thread_when_fire_detected()
+                    sprinkler.when_fire_detected(fireDetection) 
+                RetVal = deactivation.rfidThread()
+                if (RetVal == 3):
+                    print("in false mode")
+                    fireDetection = False
+                    alarm.stopThread = True         # Stop the alarm thread  
+                    deactivation.stopThread = True          # Stop the deactivation thread                                 
+                    sprinkler.when_fire_detected(fireDetection)
+                    print("test stop alarm thread") 
+            else: # !fireDetection
+                fireDetectionCooldown == True
+            
+            try:
+                if keypad.shared_keypad_queue.get_nowait() == '*':  # If keypad '*' pressed, switch to adjustment system
+                    scanning = False
+                    adjustment = True
+            except queue.Empty:
+                pass
                 
-                if alarm_thread is None or not alarm_thread.is_alive():
-                    alarm_thread_event.clear()
-                    alarm_thread = Thread(target=alarm_thread_function)
-                    alarm_thread.start()
-                sprinkler.when_fire_detected(fireDetection)
-            else:
-                if alarm_thread and alarm_thread.is_alive():
-                    alarm_thread_event.set()
-                    alarm_thread.join()  # Wait for the thread to finish
-
-                
-
-        while(adjustment):                #go back to scanner after adjusting threshold
+        # ADJUSTMENT MODE
+        while(adjustment): # go back to scanner after adjusting threshold               
+            print ("entered adjustment")
             menu.adjustMode()
             scanning = True
             adjustment = False
-
 if __name__ == "__main__":
     main()
-

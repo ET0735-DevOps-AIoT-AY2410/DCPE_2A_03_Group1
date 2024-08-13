@@ -2,61 +2,66 @@ from hal import hal_temp_humidity_sensor as temp
 from hal import hal_adc as adc
 from hal import hal_lcd as LCD
 from hal import hal_led as led
+from hal import hal_ir_sensor as ir
 import hmi as menu
+import main as mainCode
 
 import time
 from threading import Thread
 import queue
 
+temperature_list = [1] 
+
 def init():
     temp.init()
     adc.init()
     led.init()
+    ir.init()
     lcd = LCD.lcd()
     lcd.lcd_clear()
 
-
 def alarmStatus():
-    fireDetected = False
-    #tempThres = 500
-    #lightThres = 1000
-
     temperature_list = pingtemp()
     adc_list = pingadc()
-
     average_temp = avgTemp(temperature_list)
     average_adc = avgADC(adc_list)
-    
-    if(average_temp > menu.newTempThres or average_adc > menu.newLightThres):
-        fireDetected = True
-    else:
-        fireDetected = False
 
-    return fireDetected
+    #print(str(SmokeState))
+    if(average_temp > mainCode.tempThres or average_adc > mainCode.lightThres or pingSmoke()):
+        return True
+    return False
+    
+
 
 def pingtemp():    
-    temperature_list = []                           #Capture Temperature Values on last 5 seconds
+    global temperature_list                          #Capture Temperature Values on last 5 seconds
     
-    temperature = temp.read_temp_humidity()[0]  
-    time.sleep(1)           
-    temperature_list.append(temperature)
-
-    if len(temperature_list) > 5:
-        temperature_list.pop(0) 
+    temp_reading = temp.read_temp_humidity()[0]
+    if temp_reading>0:
+        temperature = temp_reading
+        temperature_list.append(temperature)
+        if len(temperature_list) > 5:
+            temperature_list.pop(0)              
 
     return temperature_list
 
-def pingadc():                                  #Capture ADC Values on last 5 seconds
+def pingadc():                                  #Capture Light Values on last 5 seconds
     adc_list = []  
     
     adcvalue = adc.get_adc_value(0)
-    time.sleep(1)
-    adc_list.append(adcvalue)
+    time.sleep(0)
+    adc_list.append(adcvalue/5)
 
     if len(adc_list) > 5:
         adc_list.pop(0) 
 
     return adc_list
+
+def pingSmoke():
+    smokeDetected = ir.get_ir_sensor_state()
+    if smokeDetected:
+        return True
+    return False
 
 def avgADC(adc_list):
     average_adc = 0
@@ -78,18 +83,12 @@ def listUpdate(list):
     if len(list) > 5:  
         list.pop(0)
 
-
-
 def main():
     init()
     while (True):
         pingtemp()      #run temp
         pingadc()       #run adc
         average_temp = avgTemp()
-        
-        print("avg temperature:" + str(average_temp))
-        print("Last 5 temperatures: " + str(temperature_list))
-        print("Last 5 light intensity: " + str(adc_list))
 
 if __name__ == "__main__":
     main()

@@ -2,106 +2,79 @@ import time
 from threading import Thread
 import queue
 from hal import hal_lcd as LCD
-from hal import hal_keypad as keypad
+import keypad
 import detection
-
-#Empty list to store sequence of keypad presses
-shared_keypad_queue = queue.Queue()
-
-#Call back function invoked when any key on keypad is pressed
-def key_pressed(key):
-    shared_keypad_queue.put(key)
+import main as mainCode
 
 def init():
     #initialization of HAL modules
-    keypad.init(key_pressed)
-    keypad_thread = Thread(target=keypad.get_key)
-    keypad_thread.start()
+    global lcd
+    lcd = LCD.lcd()
+    lcd.lcd_clear()
 
 def main():
-    lcdStart()
-
-def lcdStart():
-    lcd = LCD.lcd()
-    lcd.lcd_clear()
+    init()
 
 def scannerMode():
-    lcd = LCD.lcd()
-    lcd.lcd_clear()
     lcd.lcd_display_string("Scanning Now", 1)
-    
-    while True:
-        displayTemp = detection.pingtemp()[-1]
-        displayAdc = detection.pingadc()[-1]
-
-        lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)                #Display Scanning & Temp/Light values
-        time.sleep(3)
+    displayTemp = detection.pingtemp()[-1]
+    displayAdc = detection.pingadc()[-1]
+    lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)
 
 def adjustMode():
     lcd = LCD.lcd()
-    global newTempThres
-    global newLightThres 
-    oldTempThres = 0
-    newTempThres = 0
-    oldLightThres = 0
-    newLightThres = 0
     lcd.lcd_clear()
     lcd.lcd_display_string("Welcome to", 1)
     lcd.lcd_display_string("Adjustment Mode", 2)
-    time.sleep(3)
-
+    time.sleep(2)
     lcd.lcd_clear()
-    lcd.lcd_display_string("Temp Thres:'1'", 1)
-    lcd.lcd_display_string("Light Thres:'2'", 2)
 
-    key = shared_keypad_queue.get()
+    while True:
+        lcd.lcd_display_string(f"1-TempThres:{mainCode.tempThres}", 1)
+        lcd.lcd_display_string(f"2-LghtThres:{mainCode.lightThres}", 2)
 
-    if(key == 1):                                          #if keypad = 1, change temp threshold
-        lcd.lcd_clear()
-        lcd.lcd_display_string("Enter Temp Thres", 1)
-        oldTempThres = newTempThres
+        key = keypad.shared_keypad_queue.get()
 
-        newTempThres = int(input_from_keypad())
-        print("newTempThres", newTempThres)
+        if(key == 1): # if keypad = 1, change temp threshold
+            newTempThres = ""
+            while(True):
+                lcd.lcd_clear()
+                lcd.lcd_display_string("Temp Thresholds", 1)
+                lcd.lcd_display_string(f"Old:{mainCode.tempThres}, New:{newTempThres}", 2)
+                
+                input = keypad.shared_keypad_queue.get()
+                if input: # any key pressed
+                    if input == '*': # save & exit
+                        mainCode.tempThres = int(newTempThres)
+                        break
+                    elif input == '#': # backspace
+                        newTempThres = newTempThres[:-1] # removes last character
+                    else: # input 0-9
+                        newTempThres += str(input)
+            lcd.lcd_clear()
 
-        lcd.lcd_clear()
-        while(True):
-            lcd.lcd_display_string("Old Temp Thres:" + str(oldTempThres),1)
-            lcd.lcd_display_string("New Temp Thres:" + str(newTempThres),2)
-            if shared_keypad_queue.get() == '*':
-                break
+        elif(key == 2): #if keypad = 2, change light threshold
+            newLightThres = ""
+            while(True):
+                lcd.lcd_clear()
+                lcd.lcd_display_string("Light Thresholds", 1)
+                lcd.lcd_display_string(f"Old:{mainCode.lightThres}, New:{newLightThres}", 2)
+
+                input = keypad.shared_keypad_queue.get()
+                if input: # any key pressed
+                    if input == '*': # save & exit
+                        mainCode.lightThres = int(newLightThres)
+                        break
+                    elif input == '#': # backspace
+                        newLightThres = newLightThres[:-1] # removes last character
+                    else: # input 0-9
+                        newLightThres += str(input)
+            lcd.lcd_clear()
             
-    elif(key == 2):                                                   #if keypad = 2, change light threshold
-        lcd.lcd_clear()
-        lcd.lcd_display_string("Enter ADC Thres", 1)
-        oldLightThres = newLightThres 
-
-        newLightThres = int(input_from_keypad())
-        print("newLightThres", newLightThres)
-
-        lcd.lcd_clear()
-        while(True):
-            lcd.lcd_display_string("Old Light Thres:" + str(oldLightThres),1)
-            lcd.lcd_display_string("New Light Thres:" + str(newLightThres),2)
-            if shared_keypad_queue.get() == '*':
-                break
-
-def scannerModeThread():
-    scanner_thread = Thread(target=scannerMode)
-    scanner_thread.start()
-
-def adjustModeThread():
-    adjust_thread = Thread(target=adjustMode)
-    adjust_thread.start()
-
-def input_from_keypad():
-    value = ""
-    while (True):
-        key = shared_keypad_queue.get()
-        if key == '#':                  #key # to break away from entering value
+        elif(key == '*'):
             break
-        value += str(key)
-    return value
+    lcd.lcd_clear()
+    
 
 if __name__ == "__main__":
     main()

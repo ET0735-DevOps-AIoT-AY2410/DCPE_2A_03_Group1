@@ -1,7 +1,12 @@
 import time
 from time import sleep
 import RPi.GPIO as GPIO
+import main as mainCode
+from threading import Thread
 
+
+
+global RetForTest
 def init():
     GPIO.setmode(GPIO.BCM)  # choose BCM mode
     GPIO.setwarnings(False)
@@ -14,23 +19,18 @@ def set_servo_position(position):
     sleep(0.1)
     PWM.stop()
 
-def when_fire_detected(fire_detected):
-
-    if fire_detected == True:
+def when_fire_detected(fireDetection):
+    if fireDetection == True:
         set_servo_position(180)
-    else:    
+    else:
         set_servo_position(0)
 
+def thread_when_fire_detected():
+    alarm_thread=Thread(target=when_fire_detected)
+    alarm_thread.start()
 
 def main():
     init()
-    set_servo_position(0)
-    fireIsDetected = True
-    when_fire_detected(fireIsDetected)
-    sleep(6)
-    fireIsDetected = False
-    when_fire_detected(fireIsDetected)
-
 
 if __name__ =="__main__":
     main() 
