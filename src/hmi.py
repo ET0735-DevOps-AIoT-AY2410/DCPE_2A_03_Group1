@@ -10,16 +10,13 @@ shared_keypad_queue = queue.Queue()
 
 #Call back function invoked when any key on keypad is pressed
 def key_pressed(key):
-    print("keyyypreseed")
     shared_keypad_queue.put(key)
 
 def init():
-    global shared_keypad_queue
     #initialization of HAL modules
     keypad.init(key_pressed)
     keypad_thread = Thread(target=keypad.get_key)
     keypad_thread.start()
-    lcdStart()
 
 def main():
     lcdStart()
@@ -30,31 +27,32 @@ def lcdStart():
 
 def scannerMode():
     lcd = LCD.lcd()
-    lcd.lcd_clear()
-    lcd.lcd_display_string("Scanning Now", 1)
-    time.sleep(3)
-    
-    while True: # CHANGE THIS TO NOT LOOP FOREVER
-        displayTemp = detection.pingtemp()[-1]
-        displayAdc = detection.pingadc()[-1]
 
-        lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)                #Display Scanning & Temp/Light values
-        time.sleep(1)
+    displayTemp = detection.pingtemp()[-1]
+    displayAdc = detection.pingadc()[-1]
+
+    lcd.lcd_display_string("Sensors Scanning", 1)                    #Display Scanning & Temp/Light values
+    lcd.lcd_display_string(f"T:{displayTemp} L:{displayAdc}",2)
+
+def scannerModeThread():
+    scanner_thread = Thread(target=scannerMode)
+    scanner_thread.start()
+
+def adjustModeThread():
+    adjust_thread = Thread(target=adjustMode)
+    adjust_thread.start()
+    
 
 def adjustMode():
     lcd = LCD.lcd()
-    global newTempThres # global - so all functions can use this
-    global newLightThres 
-    global oldLightThres
-    global oldTempThres 
+    
+    global newTempThres   
+    
     oldTempThres = 0
     newTempThres = 0
+
     oldLightThres = 0
     newLightThres = 0
-    lcd.lcd_clear()
-    lcd.lcd_display_string("Welcome to", 1)
-    lcd.lcd_display_string("Adjustment Mode", 2)
-    time.sleep(3)
 
     lcd.lcd_clear()
     lcd.lcd_display_string("Temp Thres:'1'", 1)
@@ -66,14 +64,14 @@ def adjustMode():
         lcd.lcd_clear()
         lcd.lcd_display_string("Enter Temp Thres", 1)
         oldTempThres = newTempThres
+
         newTempThres = int(input_from_keypad())
-        print("hi3")
-        print("newTempThres", newTempThres)
+        ReturnTempThres()
 
         lcd.lcd_clear()
         while(True):
-            lcd.lcd_display_string("Temp Thresholds", 1)
-            lcd.lcd_display_string("Old:" + str(oldTempThres) + ", New:" + str(newTempThres),2)
+            lcd.lcd_display_string("Old Temp Thres:" + str(oldTempThres),1)
+            lcd.lcd_display_string("New Temp Thres:" + str(newTempThres),2)
             if shared_keypad_queue.get() == '*':
                 break
             
@@ -83,22 +81,15 @@ def adjustMode():
         oldLightThres = newLightThres 
 
         newLightThres = int(input_from_keypad())
-        print("newLightThres", newLightThres)
+        ReturnADCThres(newLightThres)
 
         lcd.lcd_clear()
         while(True):
-            lcd.lcd_display_string("Light Thresholds", 1)
-            lcd.lcd_display_string("Old:" + str(oldLightThres) + ", New:" + str(newLightThres),2)
+            lcd.lcd_display_string("Old Light Thres:" + str(oldLightThres),1)
+            lcd.lcd_display_string("New Light Thres:" + str(newLightThres),2)
             if shared_keypad_queue.get() == '*':
                 break
 
-def thread_scannerMode():
-    scanner_thread = Thread(target=scannerMode)
-    scanner_thread.start()
-
-def thread_adjustMode():
-    adjust_thread = Thread(target=adjustMode)
-    adjust_thread.start()
 
 def input_from_keypad():
     value = ""
@@ -107,10 +98,13 @@ def input_from_keypad():
         if key == '#':                  #key # to break away from entering value
             break
         value += str(key)
-
-        print("key inputted:" + str(key))
-        print("full list: " + str(value))
     return value
+
+def ReturnTempThres():
+    return newTempThres
+
+def ReturnADCThres(adcThres):
+    return adcThres
 
 if __name__ == "__main__":
     main()

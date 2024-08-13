@@ -15,7 +15,7 @@ from hal import hal_servo as servo
 from hal import hal_temp_humidity_sensor as temp_humid_sensor
 from hal import hal_usonic as usonic
 from hal import hal_dc_motor as dc_motor
-#from hal import hal_accelerometer as accel
+from hal import hal_accelerometer as accel
 
 #Empty list to store sequence of keypad presses
 shared_keypad_queue = queue.Queue()
@@ -42,7 +42,7 @@ def main():
     temp_humid_sensor.init()
     usonic.init()
     dc_motor.init()
-    #accelerometer = accel.init()
+    accelerometer = accel.init()
 
     keypad.init(key_pressed)
     keypad_thread = Thread(target=keypad.get_key)
@@ -56,7 +56,7 @@ def main():
 
     time.sleep(3)
 
-    #print("press 0 to test accelerometer")
+    print("press 0 to test accelerometer")
     print("press 1 to test LED")
     print("press 2 to test potentiometer")
     print("press 3 to test buzzer")
@@ -161,7 +161,7 @@ def main():
             lcd.lcd_display_string("ir sensor "  +str(ir_value), 2) 
             time.sleep(2)  
         
-        '''elif (keyvalue == 0):
+        elif (keyvalue == 0):
             x_axis, y_axis, z_axis = accelerometer.get_3_axis_adjusted()
             lcd.lcd_display_string("key pressed "  +str(keyvalue), 1) 
             lcd.lcd_display_string("x " +str(x_axis), 2) 
@@ -173,7 +173,7 @@ def main():
             print(y_axis)
             print(z_axis)  
 
-            time.sleep(2) ''' 
+            time.sleep(2)  
        
 
 

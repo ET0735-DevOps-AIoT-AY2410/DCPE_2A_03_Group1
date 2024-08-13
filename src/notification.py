@@ -8,9 +8,16 @@
 # REQ-15	
 # The notification system must include the location of the fire/activated switch within the house to assist first responders
 
+# To send a notification, use sendNotif(type, location)
+    # ty    pe must be "fire" or "help"
+    # location must be a string
+
 import requests 
 
-def debug(): # for testing notifications ONLY
+token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
+chatID = "5896827510"
+
+def main():
     selectionInput = input('1: Fire\n2: Help needed\n3: False Alarm\nWhat is the situation? ')
     locationInput = input('What is the location? ')
     if (int(selectionInput) == 1): 
@@ -22,11 +29,7 @@ def debug(): # for testing notifications ONLY
     else:
         print("ERROR: Invalid Selection")
 
-# To send a notification, use sendNotif(type, location)
-    # type must be "fire" or "help" or "false_alarm"
-    # location must be a string
-    
-def sendNotif(type, location): # call this function from other codes
+def sendNotif(type, location):
     token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
     chatID = "5896827510"
     msgHeader_dict = {
@@ -36,9 +39,9 @@ def sendNotif(type, location): # call this function from other codes
     }
     message = f"{msgHeader_dict[type]}\nLocation: {location}"
     url_sendMessage = f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chatID}&text={message}"
-    requests.get(url_sendMessage).json() # sends msg
-    print("Notification sent to SCDF_Bot! Contents: \n" + str(msgHeader_dict[type]))
+    print(requests.get(url_sendMessage).json()) # sends msg
+    print("Message Sent")
 
 if __name__ == "__main__":
     while(True):
-        debug()    
+        main()    
