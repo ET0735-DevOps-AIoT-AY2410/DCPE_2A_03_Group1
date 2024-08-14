@@ -1,4 +1,4 @@
-import src.deactivation as deacttest
+from src import deactivation as deacttest
 import pytest
 from unittest import mock
 #import RPI.GPIO as GPIO
