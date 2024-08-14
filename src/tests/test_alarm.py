@@ -1,6 +1,6 @@
-#import RPI.GPIO as GPIO
+import RPI.GPIO as GPIO
 from unittest import mock
-import src.alarm as alarmtest
+from src import alarm as alarmtest
 import pytest
 
 @mock.patch(alarmtest)
@@ -17,7 +17,5 @@ def test_when_fire_detected(mock_gpio):
     mock_gpio.output.assert_called_once_with(18, 1)
     mock_gpio.output.assert_called_once_with(18, 0)
     assert 1
-
-
 
     

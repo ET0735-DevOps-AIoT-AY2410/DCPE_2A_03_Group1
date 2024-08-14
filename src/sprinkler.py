@@ -14,16 +14,20 @@ def init():
 
 def set_servo_position(position):
     PWM = GPIO.PWM(26,50)
-    position = (-10*position)/180 + 12
-    PWM.start(position)
+    cycle = calculate_servo_position(position)
+    PWM.start(cycle)
     sleep(0.1)
     PWM.stop()
+    return cycle
 
 def when_fire_detected(fireDetection):
     if fireDetection == True:
         set_servo_position(180)
     else:
         set_servo_position(0)
+
+def calculate_servo_position(position):
+    return (-10 * position) / 180 + 12
 
 def thread_when_fire_detected():
     alarm_thread=Thread(target=when_fire_detected)

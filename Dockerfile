@@ -1,20 +1,20 @@
-# Use an official Python runtime as the base image
-FROM balenalib/raspberrypi3-debian-python:latest
+# Python Base Image from https://hub.docker.com/r/arm32v7/python/
+FROM arm32v7/python:3
 
-# Set the working directory in the container
-WORKDIR /App
+WORKDIR /app
 
 # Copy the requirements file into the container
 COPY requirements.txt .
 
 # Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir smbus
+RUN pip3 install --no-cache-dir spidev
 
-# Copy the rest of the application code into the container
-COPY . .
+# Copy the code into the container
+COPY main.py ./
+COPY hal ./hal
 
-# Expose a port (if needed)
-EXPOSE 8000
-
+WORKDIR /app
 # Define the command to run  your application
-CMD [ "python", "App.py" ]
+CMD [ "python3", "./main.py" ]
