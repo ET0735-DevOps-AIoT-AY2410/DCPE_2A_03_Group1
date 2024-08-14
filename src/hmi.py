@@ -36,9 +36,9 @@ def adjustMode():
         key = keypad.shared_keypad_queue.get()
 
         if(key == 1): # if keypad = 1, change temp threshold
+            lcd.lcd_clear()
             newTempThres = ""
             while(True):
-                lcd.lcd_clear()
                 lcd.lcd_display_string("Temp Thresholds", 1)
                 lcd.lcd_display_string(f"Old:{mainCode.tempThres}, New:{newTempThres}", 2)
                 
@@ -49,14 +49,16 @@ def adjustMode():
                         break
                     elif input == '#': # backspace
                         newTempThres = newTempThres[:-1] # removes last character
+                        lcd.lcd_clear()
+                        lcd.lcd_display_string(f"Old:{mainCode.tempThres}, New:{newTempThres}", 2)
                     else: # input 0-9
                         newTempThres += str(input)
             lcd.lcd_clear()
 
         elif(key == 2): #if keypad = 2, change light threshold
+            lcd.lcd_clear()
             newLightThres = ""
             while(True):
-                lcd.lcd_clear()
                 lcd.lcd_display_string("Light Thresholds", 1)
                 lcd.lcd_display_string(f"Old:{mainCode.lightThres}, New:{newLightThres}", 2)
 
@@ -67,6 +69,8 @@ def adjustMode():
                         break
                     elif input == '#': # backspace
                         newLightThres = newLightThres[:-1] # removes last character
+                        lcd.lcd_clear()
+                        lcd.lcd_display_string(f"Old:{mainCode.lightThres}, New:{newLightThres}", 2)
                     else: # input 0-9
                         newLightThres += str(input)
             lcd.lcd_clear()
