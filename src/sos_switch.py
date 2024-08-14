@@ -14,12 +14,11 @@ def thread_isSwitchON(): # calls detached thread
     sos_thread = Thread(target=isSwitchON)
     sos_thread.start()
 
-def isSwitchON(): 
+def isSwitchON():               # Check if SOS switch is ON
     while True:
-    # ADD IN THE CODE SO IT ONLY TURNS ON AFTER BEING ON FOR 3S @SOMEONE
         if switch.read_slide_switch() == 0: # switch ON
             print("SOS Switch Activated!")
-            notification.sendNotif("help", "123 Main St, Singapore")
+            notification.sendNotif("help", "123 Main St, Singapore")            # Send notification to emergency services
             while (switch.read_slide_switch() == 0):
                 time.sleep(0.1) # freeze code until switch OFF
         else: # switch OFF

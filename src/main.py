@@ -13,17 +13,17 @@ import keypad
 scanning = True
 adjustment = False
 fireDetection = False
-tempThres = 40
-lightThres = 170
+tempThres = 40             # Default temperature threshold
+lightThres = 170            # Default light threshold
 
-def init():
+def init():                # Initialize Components
     alarm.init()
     detection.init()
     sprinkler.init()
     sos.init()
     menu.init()
 
-def start_threads():
+def start_threads():              # Start all necessary detached threads
     sos.thread_isSwitchON()
     keypad.keypadThread()
 
@@ -31,7 +31,7 @@ def main():
     global scanning, adjustment, fireDetection, tempThres, lightThres
     fireDetectionCooldown = False
 
-    init() # Initialize Components
+    init()    # Initialize Components
     start_threads() # Start all necessary detached threads
     
     while True:
@@ -39,7 +39,7 @@ def main():
         while(scanning):
             print ("entered scanning")
             menu.scannerMode()
-            if detection.alarmStatus() == True:
+            if detection.alarmStatus() == True:         # Check if fire detected, once detected once, alarm continues to sound until deactivated
                 fireDetection = True
 
             if fireDetection:
