@@ -37,11 +37,3 @@ def rfidThread(fireDetected):
     global rfid_thread
     rfid_thread = Thread(target=rfid_scan, args=(fireDetected,))
     rfid_thread.start()
-
-def turnoff_alarm():
-    GPIO.output(24, 0)
-    GPIO.output(18, 0)    
-
-def turnOff_sprinkler():
-    sprinkler.init()
-    sprinkler.set_servo_position(0)
