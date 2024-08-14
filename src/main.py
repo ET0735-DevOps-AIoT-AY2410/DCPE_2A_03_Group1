@@ -45,12 +45,11 @@ def main():
             if fireDetection:
                 if fireDetectionCooldown == False: # this cooldown is so that it only sends notif ONCE
                     fireDetectionCooldown = True
-                    deactivation.rfidThread(fireDetection)   #deactivation of fire alarm
                     notification.sendNotif("fire","location")
                     alarm.thread_when_fire_detected()
-                    sprinkler.when_fire_detected(fireDetection) 
-                RetVal = deactivation.rfidThread()
-                if (RetVal == 3):
+                    sprinkler.when_fire_detected(fireDetection)
+                RFIDCheck = deactivation.rfidThread(fireDetection)
+                if (RFIDCheck == True):
                     print("in false mode")
                     fireDetection = False
                     alarm.stopThread = True         # Stop the alarm thread  
