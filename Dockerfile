@@ -2,7 +2,7 @@
 FROM balenalib/raspberrypi3-debian-python:latest
 
 # Set the working directory in the container
-WORKDIR /App
+WORKDIR /src/main
 
 # Copy the requirements file into the container
 COPY requirements.txt .
