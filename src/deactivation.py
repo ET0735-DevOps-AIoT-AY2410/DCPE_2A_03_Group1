@@ -9,18 +9,11 @@ import alarm
 import main as mainCode
 import sprinkler
 
-def main():
+def init():
     GPIO.setmode(GPIO.BCM)  
     GPIO.setwarnings(False)
     GPIO.setup(24, GPIO.OUT)  #gpio24 for led
     GPIO.setup(18, GPIO.OUT)  #gpio25 for buzzer
-
-    reader = rfid.init()
-    buzzer.init()
-    fireDetected = True
-    print("Fire Detected")
-
-    rfidThread(fireDetected)
 
 def rfid_scan(fireDetected):
     global rfid_thread
@@ -35,12 +28,9 @@ def rfid_scan(fireDetected):
             print ("RFID id: " + id)
             if (id == "834711133486"): 
                 notif.sendNotif("false_alarm", "123456 Dover Road #01-01") 
-                turnoff_alarm()
-                turnOff_sprinkler()
                 alarm.stopThread = True
                 mainCode.fireDetection = False
-                return 3
-            
+                return True
         time.sleep(0.5)
 
 def rfidThread(fireDetected):
@@ -55,16 +45,3 @@ def turnoff_alarm():
 def turnOff_sprinkler():
     sprinkler.init()
     sprinkler.set_servo_position(0)
-
-
-if __name__ == "__main__":
-    main()
-        
-
-
-
-
-
-
-# REQ-10	
-# In the case of a false alarm, when the RFID tag triggers the RFID sensor, it will update the bool fireDetected to False. Deactivating the fire alarm
