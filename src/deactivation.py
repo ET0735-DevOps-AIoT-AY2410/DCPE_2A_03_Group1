@@ -30,7 +30,7 @@ def rfid_scan(fireDetected):
                 notif.sendNotif("false_alarm", "123456 Dover Road #01-01") 
                 alarm.stopThread = True
                 mainCode.fireDetection = False
-                return True
+                return 3
         time.sleep(0.5)
 
 def rfidThread(fireDetected):
