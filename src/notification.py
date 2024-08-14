@@ -35,7 +35,7 @@ def sendNotif(type, location): # calls detached thread
 
 def thread_sendNotif(type, location):
     telegramNotif(type, location)
-    emailNotif(type, location)
+    # emailNotif(type, location)
 
 def telegramNotif(type, location): # sends message via telegram
     token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
