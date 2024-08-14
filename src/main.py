@@ -48,8 +48,8 @@ def main():
                     notification.sendNotif("fire","location")
                     alarm.thread_when_fire_detected()
                     sprinkler.when_fire_detected(fireDetection)
-                RFIDCheck = deactivation.rfidThread(fireDetection)
-                if (RFIDCheck == True):
+                RetVal = deactivation.rfidThread(fireDetection)
+                if (RetVal == 3):
                     print("in false mode")
                     fireDetection = False
                     alarm.stopThread = True         # Stop the alarm thread  
