@@ -10,11 +10,12 @@ import hmi as menu
 import queue
 import keypad
 
+global scanning, adjustment, fireDetection, tempThres, lightThres
 scanning = True
 adjustment = False
 fireDetection = False
-tempThres = 40             # Default temperature threshold
-lightThres = 170            # Default light threshold
+tempThres = 99
+lightThres = 171
 
 def init():                # Initialize Components
     alarm.init()
@@ -29,11 +30,13 @@ def start_threads():              # Start all necessary detached threads
 
 def main():
     global scanning, adjustment, fireDetection, tempThres, lightThres
-    fireDetectionCooldown = False
 
     init()    # Initialize Components
     start_threads() # Start all necessary detached threads
     
+    time.sleep(1)
+    fireDetectionCooldown = False
+
     while True:
         # SCANNING MODE
         while(scanning):
@@ -45,16 +48,16 @@ def main():
             if fireDetection:
                 if fireDetectionCooldown == False: # this cooldown is so that it only sends notif ONCE
                     fireDetectionCooldown = True
-                    notification.sendNotif("fire","location")
+                    notification.sendNotif("fire","123456 Dover Road")
                     alarm.thread_when_fire_detected()
-                    sprinkler.when_fire_detected(fireDetection)
+                    sprinkler.when_fire_detected(True) # 180
                 RetVal = deactivation.rfidThread(fireDetection)
                 if (RetVal == 3):
                     print("in false mode")
                     fireDetection = False
                     alarm.stopThread = True         # Stop the alarm thread  
                     deactivation.stopThread = True          # Stop the deactivation thread                                 
-                    sprinkler.when_fire_detected(fireDetection)
+                    sprinkler.when_fire_detected(False) # 0
                     print("test stop alarm thread") 
             else: # !fireDetection
                 fireDetectionCooldown == True

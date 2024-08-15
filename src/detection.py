@@ -27,7 +27,7 @@ def alarmStatus():                  #Check if fire detected
     average_adc = avgADC(adc_list)
 
     
-    if(average_temp > mainCode.tempThres or average_adc > mainCode.lightThres or pingSmoke()):
+    if(average_temp > mainCode.tempThres or average_adc > mainCode.lightThres and pingSmoke()):
         return True
     return False
     
@@ -85,10 +85,6 @@ def listUpdate(list):                          #Update List
 
 def main():
     init()
-    while (True):
-        pingtemp()      #run temp
-        pingadc()       #run adc
-        average_temp = avgTemp()
 
 if __name__ == "__main__":
     main()

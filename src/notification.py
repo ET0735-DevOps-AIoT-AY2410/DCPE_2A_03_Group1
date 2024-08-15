@@ -35,7 +35,7 @@ def sendNotif(type, location): # calls detached thread
 
 def thread_sendNotif(type, location):
     telegramNotif(type, location)
-    # emailNotif(type, location)
+    emailNotif(type, location)
 
 def telegramNotif(type, location): # sends message via telegram
     token = "7317584084:AAFmG-5ZwZwNfU8fAiypMp56qsEmmEDKy00"
@@ -47,9 +47,9 @@ def telegramNotif(type, location): # sends message via telegram
     print(f"{type} notification sent to SCDF_Bot on Telegram!")
 
 def emailNotif(type, location):
-    from_email = 'devops_group1_notifsystem@outlook.com'
+    from_email = 'devops_group1_notifsys@outlook.com'
     to_email = 'bryanong.23@ichat.sp.edu.sg'
-    password = 'devops_group1'
+    password = 'group1_devops'
 
     subject = messageHeader_dict[type]
     email_content = f"Dear SCDF,\n    {messageContent_dict[type]}\n    Location: {location}"

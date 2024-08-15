@@ -20,20 +20,30 @@ def rfid_scan(fireDetected):
     global stopThread
     global breakLoop
     stopThread = False
+    cd = False
     reader = rfid.init()
     while True:
         if fireDetected:
             id = reader.read_id_no_block()
             id = str(id)
-            print ("RFID id: " + id)
             if (id == "834711133486"): 
-                notif.sendNotif("false_alarm", "123456 Dover Road #01-01") 
                 alarm.stopThread = True
                 mainCode.fireDetection = False
+                turnBackSprinker()
+                if cd == False:
+                    notif.sendNotif("false_alarm", "123456 Dover Road #01-01") 
+                    time.sleep(3)
+                cd = True
                 return 3
+            else:
+                cd = False
         time.sleep(0.5)
 
 def rfidThread(fireDetected):
     global rfid_thread
     rfid_thread = Thread(target=rfid_scan, args=(fireDetected,))
     rfid_thread.start()
+
+def turnBackSprinker():
+    sprinkler.init()
+    sprinkler.set_servo_position(0)
