@@ -5,17 +5,20 @@ The IoT Smart Fire Alert System is designed to enhance fire safety, specifically
 ## Features
 ### 
 - **Automatic Fire Detection**:
-  - Monitors temperature and light intensity to detect fires.
+  - Monitors temperature, light intensity, and smoke levels to detect fires.
+  - **Enhanced Detection Logic**: Fire is detected if smoke is sensed in combination with either high light intensity or temperature above a threshold.
 - **Manual SOS Switch**: 
   - Allows residents to alert SCDF for urgent help.
 - **Fire Alarm Deactivation**: 
-  - Allows authorized personnel to deactivate the alarm in case of false activation.
+  - Allows authorized personnel to deactivate the alarm in case of false activation or fire has been eliminated
 - **SCDF Notification System**: 
   - Automatically sends alerts to SCDF when a fire is detected or SOS switch is activated.
 - **Sprinkler System**: 
   - Automatically activates in case of fire to suppress it.
 - **Threshold Adjustment**: 
-  - Allow users to adjust the threshold of Temperature and Light threshold to Fire Detection
+  - Allow users to adjust the threshold of Temperature and Light threshold to Fire Detection. 
+  - Press '1' on the keypad to adjust the temperature threshold or '2' to adjust the light intensity threshold. 
+  - During input, users can press the '#' key on the keypad to backspace and correct their entries.
 ## Hardware Requirements
 - Raspberry Pi Development Board
 - **Sensors**:
@@ -39,18 +42,27 @@ The IoT Smart Fire Alert System is designed to enhance fire safety, specifically
 - **Libraries**:
   - RPi.GPIO (for Raspberry Pi GPIO control)
   - SMS API (for SMS notifications)
+## Demo Video
+- https://youtu.be/4QGPknpGows
 ## Installation
-Build the Docker Image: Run the following command in your terminal from the root of your project to build the Docker image.
-- docker build -t my-raspi-app .
+**1. Build the Docker Image**
+- `docker build -t username/app .`
+  
+**2. Push to Dockerhub**
+- `docker push username/app`
+  
+**3. Pull from dockerhub**
+- `docker pull username/app`
+  
+**4. Run the container**
+- `docker run -d --privileged username/app`
 
-Run the Docker Container: After building the image, you can run the container with:
-- docker run --privileged -it --rm my-raspi-app
 ## Contributors
 - **Wong Xian Zhe**:
-  - Main, Hmi, SOS Switch
+  - Main, Hmi, SOS Switch, Keypad, pytest
 - **Bryan Ong Jia Le**:
-  - Main, Notification
+  - Main, Notification, Keypad, test
 - **Avadhanam Srihari Anirudh**:
-  - Main, Fire Detection, Deactivation
+  - Main, Detection, Deactivation, pytest
 - **Shune Lai Hlaing Hmee**:
   - Main, Alarm System, Sprinkler System, Deactivation
