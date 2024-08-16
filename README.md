@@ -49,6 +49,8 @@ The IoT Smart Fire Alert System is designed to enhance fire safety, specifically
 - **Libraries**:
   - RPi.GPIO (for Raspberry Pi GPIO control)
   - SMBUS (for Raspberry Pi I2C control)
+  - SPIDEV (for Raspberry Pi SPI control)
+  - Requests (Handles HTTP requests for Telegram Notification) 
 ## Installation
 **1. Pull from dockerhub**
 - `docker pull bryrybry/devops_grp1_2a03`
