@@ -31,7 +31,7 @@ def rfid_scan(fireDetected):
                 mainCode.fireDetection = False
                 turnBackSprinker()
                 if cd == False:
-                    notif.sendNotif("false_alarm", "123456 Dover Road #01-01") 
+                    notif.sendNotif("false_alarm") 
                     time.sleep(3)
                 cd = True
                 return 3
