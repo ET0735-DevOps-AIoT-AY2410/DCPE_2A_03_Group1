@@ -1,6 +1,5 @@
-from src import detection
+import detection
 import time
-import pytest
 
 def test_pingtemp_positive():               #Test if temperature values are positive  
     for i in range(5):

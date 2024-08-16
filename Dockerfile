@@ -1,6 +1,7 @@
 # Python Base Image from https://hub.docker.com/r/arm32v7/python/
 FROM arm32v7/python:3
 ENV SPI_PATH /app/SPI-Py
+
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -13,6 +14,7 @@ RUN pip3 install --no-cache-dir smbus
 RUN pip3 install --no-cache-dir spidev
 RUN pip3 install --no-cache-dir requests
 
+# Install /app/SPI-Py
 WORKDIR $SPI_PATH
 RUN python3 setup.py install
 
