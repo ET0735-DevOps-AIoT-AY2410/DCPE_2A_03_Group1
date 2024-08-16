@@ -65,7 +65,7 @@ def main():
             if fireDetection:
                 if fireDetectionCooldown == False: # this cooldown is so that it only sends notif ONCE
                     fireDetectionCooldown = True
-                    notification.sendNotif("fire","123456 Dover Road")
+                    notification.sendNotif("fire")
                     alarm.thread_when_fire_detected()
                     sprinkler.when_fire_detected(True) # 180
                 RetVal = deactivation.rfidThread(fireDetection)
