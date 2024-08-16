@@ -7,7 +7,8 @@ Click to View Demo Video on YouTube
 ### 
 The IoT Smart Fire Alert System is designed to enhance fire safety, specifically tailored for the individual living independently. The system continuously monitors the environment for potential fire hazards, alerts residents through an alarm system, and automatically notifies the Singapore Civil Defense Force (SCDF) in case of an emergency. It also features an automatic sprinkler system to suppress fires and manual SOS functionalities for urgent help.
 ## Dockerhub Image
-![Access it here](https://hub.docker.com/repository/docker/bryrybry/devops_grp1_2a03)
+`docker pull bryrybry/devops_grp1_2a03`
+[Dockerhub Repository](https://hub.docker.com/repository/docker/bryrybry/devops_grp1_2a03)
 ## Features
 ### 
 - **Automatic Fire Detection**:
