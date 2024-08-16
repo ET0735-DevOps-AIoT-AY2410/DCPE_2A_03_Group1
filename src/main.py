@@ -1,3 +1,4 @@
+import json
 import time
 from threading import Thread, Event
 import alarm
@@ -10,12 +11,28 @@ import hmi as menu
 import queue
 import keypad
 
+def load_thresholds():
+    global tempThres, lightThres
+    with open('thresholds.json', 'r') as file:
+        thresholds = json.load(file)
+        tempThres = thresholds['tempThres']
+        lightThres = thresholds['lightThres']
+
+def save_thresholds():
+    thresholds = {
+        'tempThres': tempThres,
+        'lightThres': lightThres
+    }
+    with open('thresholds.json', 'w') as file:
+        json.dump(thresholds, file)
+
 global scanning, adjustment, fireDetection, tempThres, lightThres
 scanning = True
 adjustment = False
 fireDetection = False
 tempThres = 99
 lightThres = 171
+load_thresholds()
 
 def init():                # Initialize Components
     alarm.init()
@@ -59,8 +76,6 @@ def main():
                     deactivation.stopThread = True          # Stop the deactivation thread                                 
                     sprinkler.when_fire_detected(False) # 0
                     print("test stop alarm thread") 
-            else: # !fireDetection
-                fireDetectionCooldown == True
             
             try:
                 if keypad.shared_keypad_queue.get_nowait() == '*':  # If keypad '*' pressed, switch to adjustment system
@@ -73,7 +88,10 @@ def main():
         while(adjustment): # go back to scanner after adjusting threshold               
             print ("entered adjustment")
             menu.adjustMode()
+            save_thresholds()
             scanning = True
             adjustment = False
+
 if __name__ == "__main__":
     main()
+    
