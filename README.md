@@ -1,3 +1,5 @@
+[![IoT Smart Fire Alert System](https://img.youtube.com/vi/4QGPknpGows/0.jpg)](https://youtu.be/4QGPknpGows)
+
 # IoT Smart Fire Alert System | DCPE/FT/2A/03 Group 1
 ## Overview
 ### 
