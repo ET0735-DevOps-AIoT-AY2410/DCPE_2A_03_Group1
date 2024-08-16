@@ -6,6 +6,8 @@ Click to View Demo Video on YouTube
 ## Overview
 ### 
 The IoT Smart Fire Alert System is designed to enhance fire safety, specifically tailored for the individual living independently. The system continuously monitors the environment for potential fire hazards, alerts residents through an alarm system, and automatically notifies the Singapore Civil Defense Force (SCDF) in case of an emergency. It also features an automatic sprinkler system to suppress fires and manual SOS functionalities for urgent help.
+## Dockerhub Image
+![Access it here](https://hub.docker.com/repository/docker/bryrybry/devops_grp1_2a03)
 ## Features
 ### 
 - **Automatic Fire Detection**:
@@ -16,13 +18,16 @@ The IoT Smart Fire Alert System is designed to enhance fire safety, specifically
 - **Fire Alarm Deactivation**: 
   - Allows authorized personnel to deactivate the alarm in case of false activation or fire has been eliminated
 - **SCDF Notification System**: 
-  - Automatically sends alerts to SCDF when a fire is detected or SOS switch is activated.
+  - Automatically sends alerts (Telegram and Email) to SCDF when a fire is detected or SOS switch is activated.
+  - System configuration file: `notif_config.json` can be modified to change location displayed in notifications and recipient email (SCDF).
+  - 
 - **Sprinkler System**: 
-  - Automatically activates in case of fire to suppress it.
-- **Threshold Adjustment**: 
-  - Allow users to adjust the threshold of Temperature and Light threshold to Fire Detection. 
+  - Automatically activates sprinkler valve in case of fire to suppress it.
+- **Threshold Adjustment Menu**: 
+  - Allow users to adjust the threshold of Temperature and Light detection threshold for Fire Detection. 
   - Press '1' on the keypad to adjust the temperature threshold or '2' to adjust the light intensity threshold. 
   - During input, users can press the '#' key on the keypad to backspace and correct their entries.
+  - Users can press the '*' key to enter adjustment menu, and to return.
 ## Hardware Requirements
 - Raspberry Pi Development Board
 - **Sensors**:
