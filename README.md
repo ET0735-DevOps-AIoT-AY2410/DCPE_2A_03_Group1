@@ -1,6 +1,8 @@
 # IoT Smart Fire Alert System | DCPE/FT/2A/03 Group 1
 [![IoT Smart Fire Alert System](https://img.youtube.com/vi/4QGPknpGows/0.jpg)](https://youtu.be/4QGPknpGows)
-
+###
+Click to View Demo Video on YouTube
+###
 ## Overview
 ### 
 The IoT Smart Fire Alert System is designed to enhance fire safety, specifically tailored for the individual living independently. The system continuously monitors the environment for potential fire hazards, alerts residents through an alarm system, and automatically notifies the Singapore Civil Defense Force (SCDF) in case of an emergency. It also features an automatic sprinkler system to suppress fires and manual SOS functionalities for urgent help.
